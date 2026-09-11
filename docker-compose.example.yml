@@ -3,7 +3,7 @@ services:
     image: ghcr.io/ferilee/tsabita:latest
     container_name: tsabita
     ports:
-      - "3001:3001"
+      - "127.0.0.1:3010:3001"
     env_file:
       - .env
     environment:
@@ -11,13 +11,10 @@ services:
       PORT: 3001
       DB_FILE_NAME: /app/data/tsabita.sqlite
     volumes:
-      - sqlite_data:/app/data
+      - /srv/data/tsabita/sqlite:/app/data
     networks:
       - ferileenet
     restart: always
-
-volumes:
-  sqlite_data:
 
 networks:
   ferileenet:
