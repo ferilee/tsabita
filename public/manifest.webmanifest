@@ -1,0 +1,32 @@
+{
+  "name": "Tsabita Dianyssa Estasaadya — perjalanan bioteknologi",
+  "short_name": "Tsabita",
+  "description": "Catatan perjalanan hidup dan kuliah Tsabita Dianyssa Estasaadya, mahasiswa Bioteknologi Universitas Negeri Malang.",
+  "lang": "id-ID",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff7f8",
+  "theme_color": "#ed5d86",
+  "icons": [
+    {
+      "src": "/icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

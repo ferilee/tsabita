@@ -22,6 +22,9 @@ const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.s
 const isAdminCurrent = (path: string) => path === '/admin'
   ? pathname === '/admin' || pathname === '/admin/'
   : pathname.startsWith(path);
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString() || Astro.url.origin;
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const ogImageUrl = new URL('/og-image.png', siteUrl).toString();
 ---
 
 <!doctype html>
@@ -31,7 +34,29 @@ const isAdminCurrent = (path: string) => path === '/admin'
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <link rel="icon" href="data:," />
+    <meta name="theme-color" content="#ed5d86" />
+    <meta name="color-scheme" content="light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:site_name" content="Tsabita" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Tsabita Dianyssa Estasaadya — perjalanan bioteknologi" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <title>{title}</title>
   </head>
   <body class={showMobileNav ? 'has-mobile-nav' : undefined}>
@@ -97,3 +122,4 @@ const isAdminCurrent = (path: string) => path === '/admin'
 
 <script src="../scripts/admin-access.ts"></script>
 <script src="../scripts/motion.ts"></script>
+<script src="../scripts/pwa.ts"></script>
