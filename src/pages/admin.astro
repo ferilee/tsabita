@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/admin.css';
+---
+
+<BaseLayout title="Admin — Tsabita" description="Dashboard admin pribadi." noindex>
+  <section class="admin-shell shell">
+    <div class="admin-heading">
+      <div><p class="eyebrow">Ruang kerja</p><h1>Admin<br /><em>dashboard.</em></h1></div>
+      <a class="back-link" href="/">← Lihat website</a>
+    </div>
+
+    <div class="admin-login" data-login-panel>
+      <p class="eyebrow">Akses terbatas</p><h2>Masuk ke dashboard</h2>
+      <p class="muted">Masukkan ADMIN_TOKEN yang ada di file `.env` lokal Anda.</p>
+      <form class="admin-form narrow" data-login-form><label>Admin token<input name="token" type="password" autocomplete="current-password" required /></label><button class="button" type="submit">Masuk <span>↗</span></button><p class="form-status" data-login-status role="status"></p></form>
+    </div>
+
+    <div class="admin-dashboard" data-dashboard hidden>
+      <div class="dashboard-top"><p class="muted">Konten yang tersimpan di database.</p><button class="plain-button" type="button" data-logout>Keluar</button></div>
+      <div class="admin-columns">
+        <div>
+          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Tulisan</p><h2 data-post-form-title>Tulisan baru</h2></div><button class="plain-button" type="button" data-reset-post>+ Baru</button></div>
+            <form class="admin-form" data-post-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="excerpt" rows="2" required></textarea></label><div class="form-row"><label>Kategori<input name="category" type="text" placeholder="Opini" required /></label><label>Waktu baca<input name="readingTime" type="text" value="5 menit" required /></label></div><div class="form-row"><label>Status<select name="status"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label><label>Tanggal terbit<input name="publishedAt" type="date" /></label></div><label class="checkbox-label"><input name="featured" type="checkbox" /> Tampilkan sebagai tulisan unggulan</label><label>Isi tulisan<textarea name="body" rows="8" required></textarea></label><button class="button" type="submit">Simpan tulisan <span>↗</span></button><p class="form-status" data-post-status role="status"></p></form>
+          </section>
+          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Karya</p><h2 data-project-form-title>Karya baru</h2></div><button class="plain-button" type="button" data-reset-project>+ Baru</button></div>
+            <form class="admin-form" data-project-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="summary" rows="2" required></textarea></label><div class="form-row"><label>Tahun<input name="year" type="number" min="2000" max="2200" required /></label><label>Kategori<input name="category" type="text" placeholder="Editorial" required /></label></div><label>Peran<input name="role" type="text" placeholder="Design, development" required /></label><label>URL gambar sampul<input name="coverImage" type="url" /></label><label>Deskripsi proyek<textarea name="body" rows="8" required></textarea></label><button class="button" type="submit">Simpan karya <span>↗</span></button><p class="form-status" data-project-status role="status"></p></form>
+          </section>
+        </div>
+        <aside>
+          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Inbox</p><h2>Pesan masuk</h2></div><span class="count" data-message-count>0</span></div><div class="admin-list" data-messages-list></div></section>
+          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Library</p><h2>Tulisan</h2></div><span class="count" data-post-count>0</span></div><div class="admin-list" data-posts-list></div></section>
+          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Library</p><h2>Karya</h2></div><span class="count" data-project-count>0</span></div><div class="admin-list" data-projects-list></div></section>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script src="../scripts/admin.ts"></script>

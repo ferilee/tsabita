@@ -8,6 +8,13 @@
       "when": 1789130338713,
       "tag": "0000_late_johnny_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789130917025,
+      "tag": "0001_bouncy_dazzler",
+      "breakpoints": true
     }
   ]
 }
