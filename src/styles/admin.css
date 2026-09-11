@@ -43,6 +43,10 @@
 .admin-form label { display: grid; gap: 8px; font-size: .72rem; font-weight: 600; }
 .admin-form input:not([type='checkbox']), .admin-form textarea, .admin-form select { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid var(--line); outline: 0; background: var(--paper); font: .9rem var(--sans); }
 .admin-form input:focus, .admin-form textarea:focus, .admin-form select:focus { border-color: var(--accent); }
+.auto-field { display: grid; align-content: start; gap: 7px; padding: 11px 12px; border: 1px dashed var(--pink-deep); background: rgba(255, 243, 245, .7); }
+.auto-field span { font-size: .72rem; font-weight: 600; }
+.auto-field strong { color: var(--coral); font-size: .9rem; line-height: 1.2; }
+.auto-field small { color: var(--muted); font-size: .66rem; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .checkbox-label { display: flex !important; grid-template-columns: auto 1fr !important; align-items: center; gap: 8px !important; }
 .checkbox-label input { accent-color: var(--accent); }

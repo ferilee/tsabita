@@ -14,7 +14,10 @@ const loginForm = document.querySelector<HTMLFormElement>('[data-login-form]');
 const loginStatus = document.querySelector<HTMLElement>('[data-login-status]');
 const postForm = document.querySelector<HTMLFormElement>('[data-post-form]');
 const projectForm = document.querySelector<HTMLFormElement>('[data-project-form]');
+const postBody = postForm?.elements.namedItem('body');
+const postStatusField = postForm?.elements.namedItem('status');
 let token = localStorage.getItem('admin-token') ?? '';
+let editingPublishedAt: string | null = null;
 
 const api = async <T>(path: string, options: ApiOptions = {}): Promise<T> => {
   const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers ?? {}) } });
@@ -30,6 +33,24 @@ const setFormValue = (form: HTMLFormElement, name: string, value: unknown) => {
   if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) field.value = String(value ?? '');
 };
 const setLoggedIn = (loggedIn: boolean) => { if (loginPanel && dashboard) { loginPanel.hidden = loggedIn; dashboard.hidden = !loggedIn; } };
+const estimateReadingTime = (body: string) => `${Math.max(1, Math.ceil(body.trim().split(/\s+/).filter(Boolean).length / 200))} menit`;
+const formatPublishedAt = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.valueOf()) ? null : new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(date);
+};
+const updatePostMeta = () => {
+  const body = postBody instanceof HTMLTextAreaElement ? postBody.value : '';
+  const status = postStatusField instanceof HTMLSelectElement ? postStatusField.value : 'draft';
+  const readingTime = document.querySelector<HTMLElement>('[data-reading-time]');
+  const publishedAt = document.querySelector<HTMLElement>('[data-published-at]');
+  if (readingTime) readingTime.textContent = estimateReadingTime(body);
+  if (publishedAt) {
+    const formattedDate = editingPublishedAt ? formatPublishedAt(editingPublishedAt) : null;
+    publishedAt.textContent = status === 'published'
+      ? formattedDate ?? 'Dibuat saat disimpan'
+      : status === 'draft' ? 'Diisi saat Published' : formattedDate ?? 'Belum tersedia';
+  }
+};
 
 const renderMessage = (item: AdminMessage, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.email)}</small><p>${escapeHtml(item.message)}</p></div>${withActions ? `<button class="status-button ${escapeHtml(item.status)}" data-message-id="${item.id}" data-message-status="${escapeHtml(item.status)}">${escapeHtml(item.status)}</button>` : `<small class="message-status ${escapeHtml(item.status)}">${escapeHtml(item.status)}</small>`}</div>`;
 const renderPost = (item: AdminPost, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${escapeHtml(item.status)}</small></div>${withActions ? `<div class="list-actions"><button class="icon-button" data-edit-post="${item.id}">Edit</button><button class="icon-button danger" data-delete-post="${item.id}">Hapus</button></div>` : ''}</div>`;
@@ -54,14 +75,19 @@ const loadDashboard = async () => {
   return { messages, posts, projects };
 };
 
-const resetForm = (form: HTMLFormElement | null, titleSelector: string, title: string) => { if (!form) return; form.reset(); setFormValue(form, 'id', ''); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = title; };
+const resetForm = (form: HTMLFormElement | null, titleSelector: string, title: string) => { if (!form) return; form.reset(); setFormValue(form, 'id', ''); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = title; if (form === postForm) { editingPublishedAt = null; updatePostMeta(); } };
 const fillForm = (form: HTMLFormElement | null, titleSelector: string, item: Record<string, unknown>) => {
   if (!form) return;
   Object.keys(item).forEach((key) => setFormValue(form, key, item[key]));
   const featured = form.elements.namedItem('featured'); if (featured instanceof HTMLInputElement) featured.checked = Boolean(item.featured);
   setFormValue(form, 'id', item.id); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = `Edit: ${item.title}`;
+  if (form === postForm) { editingPublishedAt = item.publishedAt?.toString() || null; updatePostMeta(); }
   form.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
+
+if (postBody instanceof HTMLTextAreaElement) postBody.addEventListener('input', updatePostMeta);
+if (postStatusField instanceof HTMLSelectElement) postStatusField.addEventListener('change', updatePostMeta);
+updatePostMeta();
 
 loginForm?.addEventListener('submit', async (event) => {
   event.preventDefault(); token = new FormData(loginForm).get('token')?.toString() ?? '';
@@ -85,7 +111,6 @@ postForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data: Record<string, FormDataEntryValue | boolean> = Object.fromEntries(new FormData(postForm));
   const featured = postForm.elements.namedItem('featured'); data.featured = featured instanceof HTMLInputElement && featured.checked;
-  if (!data.publishedAt) delete data.publishedAt;
   const id = data.id?.toString(); delete data.id; const status = document.querySelector<HTMLElement>('[data-post-status]');
   try { await api<AdminPost>(id ? `/api/admin/posts/${id}` : '/api/admin/posts', { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) }); if (status) status.textContent = 'Tulisan tersimpan.'; resetForm(postForm, '[data-post-form-title]', 'Tulisan baru'); await loadDashboard(); }
   catch (error) { if (status) status.textContent = errorMessage(error); }

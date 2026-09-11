@@ -20,9 +20,7 @@ const postSchema = z.object({
   body: z.string().trim().min(10),
   category: z.string().trim().min(2).max(40),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
-  readingTime: z.string().trim().max(30).default('5 menit'),
-  featured: z.boolean().default(false),
-  publishedAt: z.string().trim().optional()
+  featured: z.boolean().default(false)
 });
 
 const projectSchema = z.object({
@@ -48,6 +46,11 @@ const slugify = (value: string) => value
 const getId = (value: string) => {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
+};
+
+const estimateReadingTime = (body: string) => {
+  const wordCount = body.trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(wordCount / 200))} menit`;
 };
 
 app.get('/api/health', (c) => c.json({ ok: true }));
@@ -111,8 +114,9 @@ app.post('/api/admin/posts', async (c) => {
   const created = await db.insert(posts).values({
     ...parsed.data,
     slug: slugify(parsed.data.title),
+    readingTime: estimateReadingTime(parsed.data.body),
     updatedAt: now,
-    publishedAt: parsed.data.publishedAt || (parsed.data.status === 'published' ? now : null)
+    publishedAt: parsed.data.status === 'published' ? now : null
   }).returning();
   return c.json(created[0], 201);
 });
@@ -123,11 +127,19 @@ app.put('/api/admin/posts/:id', async (c) => {
   const parsed = postSchema.safeParse(payload);
   if (!id || !parsed.success) return c.json({ error: 'Data tulisan tidak valid.' }, 400);
 
+  const existing = await db.select({ publishedAt: posts.publishedAt }).from(posts).where(eq(posts.id, id));
+  if (!existing[0]) return c.json({ error: 'Tulisan tidak ditemukan.' }, 404);
+  const now = new Date().toISOString();
+  const publishedAt = parsed.data.status === 'draft'
+    ? null
+    : existing[0].publishedAt ?? (parsed.data.status === 'published' ? now : null);
+
   const updated = await db.update(posts).set({
     ...parsed.data,
     slug: slugify(parsed.data.title),
-    updatedAt: new Date().toISOString(),
-    publishedAt: parsed.data.publishedAt || (parsed.data.status === 'published' ? new Date().toISOString() : null)
+    readingTime: estimateReadingTime(parsed.data.body),
+    updatedAt: now,
+    publishedAt
   }).where(eq(posts.id, id)).returning();
   if (!updated[0]) return c.json({ error: 'Tulisan tidak ditemukan.' }, 404);
   return c.json(updated[0]);
