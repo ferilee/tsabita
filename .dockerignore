@@ -1,0 +1,11 @@
+.git
+.github
+.astro
+dist
+node_modules
+data
+.env
+.DS_Store
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
