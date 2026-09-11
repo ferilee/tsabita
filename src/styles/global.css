@@ -40,6 +40,7 @@ nav a:first-child::after { position: absolute; right: 0; bottom: 0; left: 0; hei
 .footer-links { display: flex; gap: 18px; }
 .footer-links a:hover { color: var(--coral); }
 .footer-heart { color: var(--coral); }
+.mobile-bottom-nav { display: none; }
 
 .home-hero { display: grid; grid-template-columns: .88fr 1.12fr; align-items: center; gap: 34px; min-height: 660px; padding: 62px 0 82px; }
 .home-hero-copy { position: relative; z-index: 1; padding-left: 28px; }
@@ -173,9 +174,13 @@ nav a:first-child::after { position: absolute; right: 0; bottom: 0; left: 0; hei
 @media (max-width: 700px) {
   .shell { width: min(100% - 32px, 1180px); }
   .site-header { padding: 18px 0; }
-  nav { gap: 13px; font-size: .65rem; }
-  nav a:nth-child(3), nav a:nth-child(4) { display: none; }
-  .nav-contact { padding: 9px 12px !important; }
+  .site-header nav { display: none; }
+  .has-mobile-nav { padding-bottom: calc(91px + env(safe-area-inset-bottom)); }
+  .mobile-bottom-nav { position: fixed; z-index: 20; right: 12px; bottom: 12px; left: 12px; display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 7px calc(8px + env(safe-area-inset-bottom)); border: 1px solid rgba(241, 203, 216, .92); border-radius: 23px; background: rgba(255, 253, 253, .9); box-shadow: 0 12px 30px rgba(91, 30, 70, .14); backdrop-filter: blur(18px); }
+  .mobile-bottom-nav a { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 3px; min-height: 49px; color: var(--muted); border-radius: 16px; font-size: .58rem; font-weight: 700; }
+  .mobile-bottom-nav a:hover, .mobile-bottom-nav a[aria-current='page'] { color: white; background: var(--coral); box-shadow: 0 5px 12px rgba(237, 93, 134, .2); }
+  .mobile-nav-icon { height: 17px; font-size: 1rem; line-height: 1; }
+  .mobile-bottom-nav a[aria-current='page'] .mobile-nav-icon { font-size: 1.05rem; }
   .home-hero { display: flex; flex-direction: column; align-items: stretch; gap: 35px; padding: 58px 0 65px; }
   .home-hero-copy { padding-left: 0; }
   .home-hero h1 { font-size: clamp(3.5rem, 15vw, 5.4rem); }

@@ -5,13 +5,18 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  showMobileNav?: boolean;
 }
 
 const {
   title = 'Nama Anda — karya, cerita, dan catatan',
   description = 'Portofolio pribadi dan jurnal digital tentang karya, cerita, opini, dan perjalanan.',
-  noindex = false
+  noindex = false,
+  showMobileNav = true
 } = Astro.props;
+
+const pathname = Astro.url.pathname;
+const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.startsWith(path);
 ---
 
 <!doctype html>
@@ -24,7 +29,7 @@ const {
     <link rel="icon" href="data:," />
     <title>{title}</title>
   </head>
-  <body>
+  <body class={showMobileNav ? 'has-mobile-nav' : undefined}>
     <header class="site-header">
       <div class="shell header-inner">
         <a class="brand" href="/" aria-label="Kembali ke beranda">tsabita<span>.</span><b>♡</b></a>
@@ -42,6 +47,13 @@ const {
     <main>
       <slot />
     </main>
+    {showMobileNav && <nav class="mobile-bottom-nav" aria-label="Navigasi mobile">
+      <a href="/" aria-current={isCurrent('/') ? 'page' : undefined}><span class="mobile-nav-icon">⌂</span><span>Home</span></a>
+      <a href="/tentang" aria-current={isCurrent('/tentang') ? 'page' : undefined}><span class="mobile-nav-icon">✿</span><span>About</span></a>
+      <a href="/karya" aria-current={isCurrent('/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Work</span></a>
+      <a href="/blog" aria-current={isCurrent('/blog') ? 'page' : undefined}><span class="mobile-nav-icon">☷</span><span>Journal</span></a>
+      <a href="/kontak" aria-current={isCurrent('/kontak') ? 'page' : undefined}><span class="mobile-nav-icon">♡</span><span>Contact</span></a>
+    </nav>}
     <footer class="site-footer">
       <div class="shell footer-inner">
         <p>© {new Date().getFullYear()} Nama Anda</p>
