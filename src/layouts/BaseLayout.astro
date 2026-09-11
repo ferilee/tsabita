@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Nama Anda — karya, cerita, dan catatan',
+  description = 'Portofolio pribadi dan jurnal digital tentang karya, cerita, opini, dan perjalanan.'
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:," />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/" aria-label="Kembali ke beranda">tsabita<span>.</span></a>
+        <nav aria-label="Navigasi utama">
+          <a href="/karya">Karya</a>
+          <a href="/blog">Blog</a>
+          <a href="/tentang">Tentang</a>
+          <a class="nav-contact" href="/kontak">Mari ngobrol <span>↗</span></a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <p>© {new Date().getFullYear()} Nama Anda</p>
+        <p>Dibuat dengan rasa ingin tahu.</p>
+        <div class="footer-links">
+          <a href="https://www.linkedin.com" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com" rel="noreferrer">GitHub</a>
+          <a href="mailto:halo@example.com">Email</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => b.data.year - a.data.year);
+---
+
+<BaseLayout title="Karya — Nama Anda">
+  <section class="page-intro shell">
+    <p class="eyebrow">01 / Portofolio</p>
+    <h1>Beberapa hal<br /><em>yang pernah dibuat.</em></h1>
+    <p class="page-lede">Kumpulan proyek, eksperimen, dan kolaborasi yang membentuk cara saya bekerja.</p>
+  </section>
+  <section class="section shell compact-top">
+    <div class="project-grid project-grid-all">
+      {projects.map((project, index) => (
+        <a class="project-card" href={`/karya/${project.id}`}>
+          <div class="project-image" style={`--card-color: ${project.data.cover}`}>
+            <span class="project-number">0{index + 1}</span><span class="project-mark">✳</span>
+          </div>
+          <div class="project-meta"><div><h3>{project.data.title}</h3><p>{project.data.summary}</p></div><span class="year">{project.data.year}</span></div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

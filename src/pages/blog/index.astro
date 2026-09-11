@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<BaseLayout title="Blog — Nama Anda">
+  <section class="page-intro shell">
+    <p class="eyebrow">02 / Jurnal pribadi</p>
+    <h1>Tempat menyimpan<br /><em>yang belum selesai.</em></h1>
+    <p class="page-lede">Cerita, opini, catatan perjalanan, dan pertanyaan yang masih saya bawa pulang.</p>
+  </section>
+  <section class="section shell compact-top">
+    <div class="post-list full-list">
+      {posts.map((post) => (
+        <a class="post-row" href={`/blog/${post.id}`}>
+          <div class="post-date">{formatDate(post.data.publishedAt)}</div>
+          <div class="post-content"><span class="tag">{post.data.category} · {post.data.readingTime}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div>
+          <span class="row-arrow">↗</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,8 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "allowJs": true,
+    "verbatimModuleSyntax": true,
+    "types": ["bun"]
+  }
+}

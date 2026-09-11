@@ -1,0 +1,27 @@
+{
+  "name": "tsabita",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:web": "astro dev",
+    "dev:api": "bun --hot src/server/index.ts",
+    "build": "astro build",
+    "start": "bun run src/server/index.ts",
+    "check": "astro check",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun run src/db/migrate.ts"
+  },
+  "dependencies": {
+    "astro": "latest",
+    "drizzle-orm": "latest",
+    "hono": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "@types/bun": "latest",
+    "drizzle-kit": "latest",
+    "typescript": "^6.0.0"
+  }
+}

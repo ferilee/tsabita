@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Kontak — Nama Anda">
+  <section class="page-intro shell">
+    <p class="eyebrow">04 / Kontak</p>
+    <h1>Mari mulai<br /><em>percakapan.</em></h1>
+    <p class="page-lede">Ceritakan sedikit tentang ide, proyek, atau hal yang sedang Anda pikirkan.</p>
+  </section>
+  <section class="section shell contact-grid">
+    <div><p class="eyebrow">Kontak langsung</p><a class="email-link" href="mailto:halo@example.com">halo@example.com</a><p class="muted">Biasanya saya membalas dalam 1–2 hari kerja.</p></div>
+    <form class="contact-form" data-contact-form>
+      <label>Nama<input name="name" type="text" autocomplete="name" required /></label>
+      <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+      <label>Ceritakan tentang proyeknya<textarea name="message" rows="6" required></textarea></label>
+      <button class="button" type="submit">Kirim pesan <span>↗</span></button>
+      <p class="form-status" data-form-status role="status"></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const status = document.querySelector<HTMLElement>('[data-form-status]');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!status) return;
+    status.textContent = 'Mengirim pesan…';
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? 'Pesan belum berhasil dikirim.');
+      status.textContent = result.message;
+      form.reset();
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : 'Terjadi kesalahan. Coba lagi.';
+    }
+  });
+</script>
