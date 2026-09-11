@@ -75,8 +75,24 @@ const isAdminCurrent = (path: string) => path === '/admin'
           <a href="https://www.linkedin.com" rel="noreferrer">LinkedIn</a>
           <a href="https://www.instagram.com" rel="noreferrer">Instagram</a>
           <a href="mailto:tsabita@example.com">Email</a>
+          {mobileNav === 'public' && <button class="admin-access" type="button" data-admin-modal-open>Akses admin</button>}
         </div>
       </div>
     </footer>
+    {mobileNav === 'public' && <dialog class="admin-access-modal" data-admin-modal>
+      <div class="admin-modal-content">
+        <button class="admin-modal-close" type="button" data-admin-modal-close aria-label="Tutup akses admin">×</button>
+        <p class="eyebrow">Ruang kerja</p>
+        <h2>Masuk ke dashboard</h2>
+        <p class="muted">Gunakan token admin untuk mengelola tulisan, karya, dan pesan masuk.</p>
+        <form class="admin-form" data-public-login-form>
+          <label>Admin token<input name="token" type="password" autocomplete="current-password" required /></label>
+          <button class="button" type="submit">Masuk <span>↗</span></button>
+          <p class="form-status" data-public-login-status role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </dialog>}
   </body>
 </html>
+
+<script src="../scripts/admin-access.ts"></script>

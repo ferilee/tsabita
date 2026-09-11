@@ -40,6 +40,20 @@ nav a:first-child::after { position: absolute; right: 0; bottom: 0; left: 0; hei
 .footer-links { display: flex; gap: 18px; }
 .footer-links a:hover { color: var(--coral); }
 .footer-heart { color: var(--coral); }
+.admin-access { padding: 0; color: var(--muted); border: 0; background: transparent; font: inherit; cursor: pointer; }
+.admin-access:hover { color: var(--coral); }
+.admin-access-modal { width: min(420px, calc(100% - 32px)); padding: 0; color: var(--ink); border: 1px solid var(--line); border-radius: 26px; background: var(--paper); box-shadow: 0 24px 70px rgba(77, 30, 77, .22); }
+.admin-access-modal::backdrop { background: rgba(41, 23, 47, .32); backdrop-filter: blur(4px); }
+.admin-modal-content { position: relative; padding: 35px; }
+.admin-modal-content h2 { margin: 0 0 10px; font-size: 1.7rem; letter-spacing: -.05em; }
+.admin-modal-content .muted { margin: 0; }
+.admin-modal-content form { display: grid; gap: 18px; margin-top: 26px; }
+.admin-modal-content label { display: grid; gap: 8px; font-size: .72rem; font-weight: 600; }
+.admin-modal-content input { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid var(--line); outline: 0; background: var(--white); font: .9rem var(--sans); }
+.admin-modal-content input:focus { border-color: var(--coral); }
+.admin-modal-content .button:disabled { cursor: wait; opacity: .7; }
+.admin-modal-close { position: absolute; top: 17px; right: 19px; width: 30px; height: 30px; padding: 0; color: var(--muted); border: 0; border-radius: 50%; background: transparent; font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.admin-modal-close:hover { color: var(--coral); background: var(--pink); }
 .mobile-bottom-nav { display: none; }
 
 .home-hero { display: grid; grid-template-columns: .88fr 1.12fr; align-items: center; gap: 34px; min-height: 660px; padding: 62px 0 82px; }
@@ -236,4 +250,6 @@ nav a:first-child::after { position: absolute; right: 0; bottom: 0; left: 0; hei
   .about-portrait { min-height: 300px; }
   .about-grid, .contact-grid { gap: 40px; }
   .footer-inner { align-items: start; flex-direction: column; gap: 8px; }
+  .footer-links { flex-wrap: wrap; gap: 8px 18px; }
+  .admin-modal-content { padding: 30px 24px 26px; }
 }

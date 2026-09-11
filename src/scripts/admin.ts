@@ -1,3 +1,5 @@
+export {};
+
 interface ApiOptions extends RequestInit {
   headers?: Record<string, string>;
 }
