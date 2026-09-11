@@ -10,6 +10,7 @@ services:
       NODE_ENV: production
       PORT: 3001
       DB_FILE_NAME: /app/data/tsabita.sqlite
+      PUBLIC_SITE_URL: https://tita-binti.ferilee.gurumuda.eu.org
     volumes:
       - /srv/data/tsabita/sqlite:/app/data
     networks:

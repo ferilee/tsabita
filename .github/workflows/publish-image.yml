@@ -6,6 +6,7 @@ on:
       site_url:
         description: 'Public website URL used for canonical and Open Graph metadata'
         required: false
+        default: 'https://tita-binti.ferilee.gurumuda.eu.org'
         type: string
 
 permissions:
