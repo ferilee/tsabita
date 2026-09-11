@@ -32,4 +32,4 @@ Tulisan blog ada di `src/content/blog/`, sedangkan karya ada di `src/content/pro
 
 Atur `ADMIN_TOKEN` di `.env`, lalu buka `http://localhost:4321/admin`. Dashboard dapat melihat pesan kontak serta membuat, mengubah, dan menghapus post atau karya di SQLite.
 
-Konten publik saat ini tetap bersumber dari Markdown sehingga perubahan dari library database belum otomatis tampil di halaman publik. Untuk workflow produksi, tahap berikutnya adalah memindahkan renderer publik ke database atau membuat proses publish yang mengekspor konten database menjadi Markdown.
+Gunakan tombol `Publish ke website` setelah sebuah post berstatus `published`. Konten database akan diekspor ke `src/content/published-blog/` dan `src/content/published-projects/`, lalu ikut masuk ke build Astro. Untuk deployment, jalankan `bun run publish` kemudian `bun run build`.

@@ -4,6 +4,7 @@ import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/index';
 import { contactMessages, posts, projects } from '../db/schema';
+import { publishContent } from '../scripts/publish-content';
 
 const app = new Hono();
 
@@ -143,6 +144,11 @@ app.delete('/api/admin/posts/:id', async (c) => {
 app.get('/api/admin/projects', async (c) => {
   const entries = await db.select().from(projects).orderBy(desc(projects.updatedAt));
   return c.json(entries);
+});
+
+app.post('/api/admin/publish', async (c) => {
+  const result = await publishContent();
+  return c.json({ message: `Publish selesai: ${result.posts} tulisan dan ${result.projects} karya. Jalankan build untuk memperbarui website.`, ...result });
 });
 
 app.post('/api/admin/projects', async (c) => {

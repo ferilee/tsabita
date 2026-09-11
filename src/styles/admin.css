@@ -6,6 +6,7 @@
 .admin-dashboard[hidden], .admin-login[hidden] { display: none; }
 .dashboard-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .dashboard-top p { margin: 0; }
+.dashboard-actions { display: flex; gap: 18px; align-items: center; }
 .admin-columns { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, .8fr); gap: 24px; }
 .admin-columns > div { display: grid; gap: 24px; }
 .admin-card { padding: 28px; border: 1px solid var(--line); background: rgba(255,255,255,.28); }

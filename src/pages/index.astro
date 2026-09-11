@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getBlogEntries, getProjectEntries } from '../lib/content';
 
-const projects = (await getCollection('projects'))
+const projects = (await getProjectEntries())
   .filter(({ data }) => data.featured)
   .sort((a, b) => b.data.year - a.data.year);
-const posts = (await getCollection('blog'))
+const posts = (await getBlogEntries())
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
   .slice(0, 2);
 const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });

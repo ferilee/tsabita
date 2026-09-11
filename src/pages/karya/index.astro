@@ -1,8 +1,8 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjectEntries } from '../../lib/content';
 
-const projects = (await getCollection('projects')).sort((a, b) => b.data.year - a.data.year);
+const projects = (await getProjectEntries()).sort((a, b) => b.data.year - a.data.year);
 ---
 
 <BaseLayout title="Karya — Nama Anda">

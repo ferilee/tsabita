@@ -60,6 +60,14 @@ loginForm?.addEventListener('submit', async (event) => {
 document.querySelector('[data-logout]')?.addEventListener('click', () => { token = ''; localStorage.removeItem('admin-token'); setLoggedIn(false); });
 document.querySelector('[data-reset-post]')?.addEventListener('click', () => resetForm(postForm, '[data-post-form-title]', 'Tulisan baru'));
 document.querySelector('[data-reset-project]')?.addEventListener('click', () => resetForm(projectForm, '[data-project-form-title]', 'Karya baru'));
+document.querySelector('[data-publish]')?.addEventListener('click', async (event) => {
+  const button = event.currentTarget as HTMLButtonElement;
+  button.disabled = true;
+  button.textContent = 'Publishing…';
+  try { const result = await api<{ message: string }>('/api/admin/publish', { method: 'POST' }); button.textContent = result.message; }
+  catch (error) { button.textContent = errorMessage(error); }
+  finally { window.setTimeout(() => { button.textContent = 'Publish ke website'; button.disabled = false; }, 3500); }
+});
 
 postForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
