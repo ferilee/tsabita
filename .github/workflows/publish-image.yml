@@ -24,8 +24,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: \${{ github.actor }}
-          password: \${{ secrets.GITHUB_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6
@@ -34,5 +34,5 @@ jobs:
           file: ./Dockerfile
           push: true
           build-args: |
-            PUBLIC_SITE_URL=\${{ inputs.site_url }}
+            PUBLIC_SITE_URL=${{ inputs.site_url }}
           tags: ghcr.io/ferilee/tsabita:latest
