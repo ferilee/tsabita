@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import '../styles/admin.css';
+
+interface Props {
+  title?: string;
+  heading?: string;
+  description?: string;
+}
+
+const {
+  title = 'Admin — Tsabita',
+  heading = 'dashboard.',
+  description = 'Dashboard admin pribadi.'
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description} noindex mobileNav="admin">
+  <section class="admin-shell shell">
+    <div class="admin-heading">
+      <div><p class="eyebrow">Ruang kerja</p><h1>Admin<br /><em>{heading}</em></h1></div>
+      <a class="back-link" href="/">← Lihat website</a>
+    </div>
+
+    <div class="admin-login" data-login-panel>
+      <p class="eyebrow">Akses terbatas</p><h2>Masuk ke dashboard</h2>
+      <p class="muted">Masukkan ADMIN_TOKEN yang ada di file `.env` lokal Anda.</p>
+      <form class="admin-form narrow" data-login-form><label>Admin token<input name="token" type="password" autocomplete="current-password" required /></label><button class="button" type="submit">Masuk <span>↗</span></button><p class="form-status" data-login-status role="status"></p></form>
+    </div>
+
+    <div class="admin-dashboard" data-dashboard hidden>
+      <div class="dashboard-top"><p class="muted">Konten yang tersimpan di database.</p><div class="dashboard-actions"><button class="plain-button" type="button" data-publish>Publish ke website</button><button class="plain-button" type="button" data-logout>Keluar</button></div></div>
+      <slot />
+    </div>
+  </section>
+</BaseLayout>
+
+<script src="../scripts/admin.ts"></script>

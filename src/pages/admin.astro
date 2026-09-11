@@ -1,40 +1,45 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/admin.css';
+import AdminLayout from '../layouts/AdminLayout.astro';
 ---
 
-<BaseLayout title="Admin — Tsabita" description="Dashboard admin pribadi." noindex showMobileNav={false}>
-  <section class="admin-shell shell">
-    <div class="admin-heading">
-      <div><p class="eyebrow">Ruang kerja</p><h1>Admin<br /><em>dashboard.</em></h1></div>
-      <a class="back-link" href="/">← Lihat website</a>
+<AdminLayout>
+  <section class="admin-overview">
+    <div class="section-heading admin-section-heading">
+      <div><p class="eyebrow">Ringkasan</p><h2>Halo, Tsabita <span>♡</span></h2></div>
+      <p class="muted">Kelola cerita dan karya dari satu tempat.</p>
     </div>
 
-    <div class="admin-login" data-login-panel>
-      <p class="eyebrow">Akses terbatas</p><h2>Masuk ke dashboard</h2>
-      <p class="muted">Masukkan ADMIN_TOKEN yang ada di file `.env` lokal Anda.</p>
-      <form class="admin-form narrow" data-login-form><label>Admin token<input name="token" type="password" autocomplete="current-password" required /></label><button class="button" type="submit">Masuk <span>↗</span></button><p class="form-status" data-login-status role="status"></p></form>
+    <div class="admin-stat-grid">
+      <a class="admin-stat" href="/admin/tulisan"><span class="admin-stat-icon">✎</span><span><small>Total tulisan</small><strong data-post-count>0</strong></span><b>↗</b></a>
+      <a class="admin-stat" href="/admin/karya"><span class="admin-stat-icon">✦</span><span><small>Total karya</small><strong data-project-count>0</strong></span><b>↗</b></a>
+      <a class="admin-stat" href="/admin/inbox"><span class="admin-stat-icon">✉</span><span><small>Pesan masuk</small><strong data-message-count>0</strong></span><b>↗</b></a>
+      <div class="admin-stat"><span class="admin-stat-icon">♡</span><span><small>Belum dibaca</small><strong data-unread-count>0</strong></span></div>
     </div>
 
-    <div class="admin-dashboard" data-dashboard hidden>
-      <div class="dashboard-top"><p class="muted">Konten yang tersimpan di database.</p><div class="dashboard-actions"><button class="plain-button" type="button" data-publish>Publish ke website</button><button class="plain-button" type="button" data-logout>Keluar</button></div></div>
-      <div class="admin-columns">
-        <div>
-          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Tulisan</p><h2 data-post-form-title>Tulisan baru</h2></div><button class="plain-button" type="button" data-reset-post>+ Baru</button></div>
-            <form class="admin-form" data-post-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="excerpt" rows="2" required></textarea></label><div class="form-row"><label>Kategori<input name="category" type="text" placeholder="Opini" required /></label><label>Waktu baca<input name="readingTime" type="text" value="5 menit" required /></label></div><div class="form-row"><label>Status<select name="status"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label><label>Tanggal terbit<input name="publishedAt" type="date" /></label></div><label class="checkbox-label"><input name="featured" type="checkbox" /> Tampilkan sebagai tulisan unggulan</label><label>Isi tulisan<textarea name="body" rows="8" required></textarea></label><button class="button" type="submit">Simpan tulisan <span>↗</span></button><p class="form-status" data-post-status role="status"></p></form>
-          </section>
-          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Karya</p><h2 data-project-form-title>Karya baru</h2></div><button class="plain-button" type="button" data-reset-project>+ Baru</button></div>
-            <form class="admin-form" data-project-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="summary" rows="2" required></textarea></label><div class="form-row"><label>Tahun<input name="year" type="number" min="2000" max="2200" required /></label><label>Kategori<input name="category" type="text" placeholder="Editorial" required /></label></div><label>Peran<input name="role" type="text" placeholder="Design, development" required /></label><label>URL gambar sampul<input name="coverImage" type="url" /></label><label>Deskripsi proyek<textarea name="body" rows="8" required></textarea></label><button class="button" type="submit">Simpan karya <span>↗</span></button><p class="form-status" data-project-status role="status"></p></form>
-          </section>
-        </div>
-        <aside>
-          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Inbox</p><h2>Pesan masuk</h2></div><span class="count" data-message-count>0</span></div><div class="admin-list" data-messages-list></div></section>
-          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Library</p><h2>Tulisan</h2></div><span class="count" data-post-count>0</span></div><div class="admin-list" data-posts-list></div></section>
-          <section class="admin-card"><div class="card-heading"><div><p class="eyebrow">Library</p><h2>Karya</h2></div><span class="count" data-project-count>0</span></div><div class="admin-list" data-projects-list></div></section>
-        </aside>
-      </div>
+    <div class="admin-quick-actions">
+      <p class="eyebrow">Aksi cepat</p>
+      <div><a class="button" href="/admin/tulisan">Tulis artikel <span>↗</span></a><a class="outline-button" href="/admin/karya">Tambah karya <span>↗</span></a></div>
     </div>
+
+    <div class="admin-content-status">
+      <p class="eyebrow">Status konten</p>
+      <div><span><strong data-published-count>0</strong> tulisan terbit</span><span><strong data-draft-count>0</strong> tulisan draft</span></div>
+    </div>
+
+    <div class="admin-overview-grid">
+      <section class="admin-card">
+        <div class="card-heading"><div><p class="eyebrow">Terbaru</p><h2>Tulisan terakhir</h2></div><a class="plain-button" href="/admin/tulisan">Lihat semua →</a></div>
+        <div class="admin-list" data-latest-posts></div>
+      </section>
+      <section class="admin-card">
+        <div class="card-heading"><div><p class="eyebrow">Terbaru</p><h2>Karya terakhir</h2></div><a class="plain-button" href="/admin/karya">Lihat semua →</a></div>
+        <div class="admin-list" data-latest-projects></div>
+      </section>
+    </div>
+
+    <section class="admin-card admin-recent-messages">
+      <div class="card-heading"><div><p class="eyebrow">Inbox</p><h2>Pesan terbaru</h2></div><a class="plain-button" href="/admin/inbox">Buka inbox →</a></div>
+      <div class="admin-list" data-recent-messages></div>
+    </section>
   </section>
-</BaseLayout>
-
-<script src="../scripts/admin.ts"></script>
+</AdminLayout>

@@ -6,17 +6,22 @@ interface Props {
   description?: string;
   noindex?: boolean;
   showMobileNav?: boolean;
+  mobileNav?: 'public' | 'admin';
 }
 
 const {
   title = 'Tsabita Dianyssa Estasaadya — perjalanan bioteknologi',
   description = 'Catatan perjalanan hidup dan kuliah Tsabita Dianyssa Estasaadya, mahasiswa Bioteknologi Universitas Negeri Malang.',
   noindex = false,
-  showMobileNav = true
+  showMobileNav = true,
+  mobileNav = 'public'
 } = Astro.props;
 
 const pathname = Astro.url.pathname;
 const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.startsWith(path);
+const isAdminCurrent = (path: string) => path === '/admin'
+  ? pathname === '/admin' || pathname === '/admin/'
+  : pathname.startsWith(path);
 ---
 
 <!doctype html>
@@ -47,12 +52,20 @@ const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.s
     <main>
       <slot />
     </main>
-    {showMobileNav && <nav class="mobile-bottom-nav" aria-label="Navigasi mobile">
-      <a href="/" aria-current={isCurrent('/') ? 'page' : undefined}><span class="mobile-nav-icon">⌂</span><span>Home</span></a>
-      <a href="/tentang" aria-current={isCurrent('/tentang') ? 'page' : undefined}><span class="mobile-nav-icon">✿</span><span>Tentang</span></a>
-      <a href="/karya" aria-current={isCurrent('/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Karya</span></a>
-      <a href="/blog" aria-current={isCurrent('/blog') ? 'page' : undefined}><span class="mobile-nav-icon">☷</span><span>Jurnal</span></a>
-      <a href="/kontak" aria-current={isCurrent('/kontak') ? 'page' : undefined}><span class="mobile-nav-icon">♡</span><span>Kontak</span></a>
+    {showMobileNav && <nav class="mobile-bottom-nav" aria-label={mobileNav === 'admin' ? 'Navigasi admin mobile' : 'Navigasi mobile'}>
+      {mobileNav === 'admin' ? <>
+        <a href="/admin" aria-current={isAdminCurrent('/admin') ? 'page' : undefined}><span class="mobile-nav-icon">⌂</span><span>Dashboard</span></a>
+        <a href="/admin/tulisan" aria-current={isAdminCurrent('/admin/tulisan') ? 'page' : undefined}><span class="mobile-nav-icon">✎</span><span>Tulisan</span></a>
+        <a href="/admin/karya" aria-current={isAdminCurrent('/admin/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Karya</span></a>
+        <a href="/admin/inbox" aria-current={isAdminCurrent('/admin/inbox') ? 'page' : undefined}><span class="mobile-nav-icon">✉</span><span>Inbox</span></a>
+        <a href="/"><span class="mobile-nav-icon">↗</span><span>Website</span></a>
+      </> : <>
+        <a href="/" aria-current={isCurrent('/') ? 'page' : undefined}><span class="mobile-nav-icon">⌂</span><span>Home</span></a>
+        <a href="/tentang" aria-current={isCurrent('/tentang') ? 'page' : undefined}><span class="mobile-nav-icon">✿</span><span>Tentang</span></a>
+        <a href="/karya" aria-current={isCurrent('/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Karya</span></a>
+        <a href="/blog" aria-current={isCurrent('/blog') ? 'page' : undefined}><span class="mobile-nav-icon">☷</span><span>Jurnal</span></a>
+        <a href="/kontak" aria-current={isCurrent('/kontak') ? 'page' : undefined}><span class="mobile-nav-icon">♡</span><span>Kontak</span></a>
+      </>}
     </nav>}
     <footer class="site-footer">
       <div class="shell footer-inner">

@@ -29,6 +29,10 @@ const setFormValue = (form: HTMLFormElement, name: string, value: unknown) => {
 };
 const setLoggedIn = (loggedIn: boolean) => { if (loginPanel && dashboard) { loginPanel.hidden = loggedIn; dashboard.hidden = !loggedIn; } };
 
+const renderMessage = (item: AdminMessage, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.email)}</small><p>${escapeHtml(item.message)}</p></div>${withActions ? `<button class="status-button ${escapeHtml(item.status)}" data-message-id="${item.id}" data-message-status="${escapeHtml(item.status)}">${escapeHtml(item.status)}</button>` : `<small class="message-status ${escapeHtml(item.status)}">${escapeHtml(item.status)}</small>`}</div>`;
+const renderPost = (item: AdminPost, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${escapeHtml(item.status)}</small></div>${withActions ? `<div class="list-actions"><button class="icon-button" data-edit-post="${item.id}">Edit</button><button class="icon-button danger" data-delete-post="${item.id}">Hapus</button></div>` : ''}</div>`;
+const renderProject = (item: AdminProject, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${item.year}</small></div>${withActions ? `<div class="list-actions"><button class="icon-button" data-edit-project="${item.id}">Edit</button><button class="icon-button danger" data-delete-project="${item.id}">Hapus</button></div>` : ''}</div>`;
+
 const loadDashboard = async () => {
   const [messages, posts, projects] = await Promise.all([
     api<AdminMessage[]>('/api/admin/messages'), api<AdminPost[]>('/api/admin/posts'), api<AdminProject[]>('/api/admin/projects')
@@ -36,9 +40,15 @@ const loadDashboard = async () => {
   const setText = (selector: string, value: string | number) => { const element = document.querySelector<HTMLElement>(selector); if (element) element.textContent = String(value); };
   const setHtml = (selector: string, value: string) => { const element = document.querySelector<HTMLElement>(selector); if (element) element.innerHTML = value; };
   setText('[data-message-count]', messages.length); setText('[data-post-count]', posts.length); setText('[data-project-count]', projects.length);
-  setHtml('[data-messages-list]', messages.length ? messages.map((item) => `<div class="list-item"><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.email)}</small><p>${escapeHtml(item.message)}</p></div><button class="status-button ${escapeHtml(item.status)}" data-message-id="${item.id}" data-message-status="${escapeHtml(item.status)}">${escapeHtml(item.status)}</button></div>`).join('') : '<p class="empty">Belum ada pesan.</p>');
-  setHtml('[data-posts-list]', posts.length ? posts.map((item) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${escapeHtml(item.status)}</small></div><div class="list-actions"><button class="icon-button" data-edit-post="${item.id}">Edit</button><button class="icon-button danger" data-delete-post="${item.id}">Hapus</button></div></div>`).join('') : '<p class="empty">Belum ada tulisan di database.</p>');
-  setHtml('[data-projects-list]', projects.length ? projects.map((item) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${item.year}</small></div><div class="list-actions"><button class="icon-button" data-edit-project="${item.id}">Edit</button><button class="icon-button danger" data-delete-project="${item.id}">Hapus</button></div></div>`).join('') : '<p class="empty">Belum ada karya di database.</p>');
+  setText('[data-unread-count]', messages.filter((item) => item.status === 'new').length);
+  setText('[data-draft-count]', posts.filter((item) => item.status === 'draft').length);
+  setText('[data-published-count]', posts.filter((item) => item.status === 'published').length);
+  setHtml('[data-messages-list]', messages.length ? messages.map((item) => renderMessage(item)).join('') : '<p class="empty">Belum ada pesan.</p>');
+  setHtml('[data-posts-list]', posts.length ? posts.map((item) => renderPost(item)).join('') : '<p class="empty">Belum ada tulisan di database.</p>');
+  setHtml('[data-projects-list]', projects.length ? projects.map((item) => renderProject(item)).join('') : '<p class="empty">Belum ada karya di database.</p>');
+  setHtml('[data-latest-posts]', posts.length ? posts.slice(0, 5).map((item) => renderPost(item, false)).join('') : '<p class="empty">Belum ada tulisan di database.</p>');
+  setHtml('[data-latest-projects]', projects.length ? projects.slice(0, 5).map((item) => renderProject(item, false)).join('') : '<p class="empty">Belum ada karya di database.</p>');
+  setHtml('[data-recent-messages]', messages.length ? messages.slice(0, 3).map((item) => renderMessage(item, false)).join('') : '<p class="empty">Belum ada pesan.</p>');
   return { messages, posts, projects };
 };
 

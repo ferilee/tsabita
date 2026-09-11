@@ -1,0 +1,17 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Karya — Admin Tsabita" heading="karya.">
+  <div class="admin-page-grid">
+    <section class="admin-card">
+      <div class="card-heading"><div><p class="eyebrow">Editor</p><h2 data-project-form-title>Karya baru</h2></div><button class="plain-button" type="button" data-reset-project>+ Baru</button></div>
+      <form class="admin-form" data-project-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="summary" rows="2" required></textarea></label><div class="form-row"><label>Tahun<input name="year" type="number" min="2000" max="2200" required /></label><label>Kategori<input name="category" type="text" placeholder="Praktikum" required /></label></div><label>Peran<input name="role" type="text" placeholder="Research, documentation" required /></label><label>URL gambar sampul<input name="coverImage" type="url" /></label><label>Deskripsi karya<textarea name="body" rows="12" required></textarea></label><button class="button" type="submit">Simpan karya <span>↗</span></button><p class="form-status" data-project-status role="status"></p></form>
+    </section>
+
+    <section class="admin-card">
+      <div class="card-heading"><div><p class="eyebrow">Library</p><h2>Semua karya</h2></div><span class="count" data-project-count>0</span></div>
+      <div class="admin-list" data-projects-list></div>
+    </section>
+  </div>
+</AdminLayout>

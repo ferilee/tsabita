@@ -1,0 +1,17 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Tulisan — Admin Tsabita" heading="tulisan.">
+  <div class="admin-page-grid">
+    <section class="admin-card">
+      <div class="card-heading"><div><p class="eyebrow">Editor</p><h2 data-post-form-title>Tulisan baru</h2></div><button class="plain-button" type="button" data-reset-post>+ Baru</button></div>
+      <form class="admin-form" data-post-form><input name="id" type="hidden" /><label>Judul<input name="title" type="text" required /></label><label>Ringkasan<textarea name="excerpt" rows="2" required></textarea></label><div class="form-row"><label>Kategori<input name="category" type="text" placeholder="Opini" required /></label><label>Waktu baca<input name="readingTime" type="text" value="5 menit" required /></label></div><div class="form-row"><label>Status<select name="status"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></label><label>Tanggal terbit<input name="publishedAt" type="date" /></label></div><label class="checkbox-label"><input name="featured" type="checkbox" /> Tampilkan sebagai tulisan unggulan</label><label>Isi tulisan<textarea name="body" rows="12" required></textarea></label><button class="button" type="submit">Simpan tulisan <span>↗</span></button><p class="form-status" data-post-status role="status"></p></form>
+    </section>
+
+    <section class="admin-card">
+      <div class="card-heading"><div><p class="eyebrow">Library</p><h2>Semua tulisan</h2></div><span class="count" data-post-count>0</span></div>
+      <div class="admin-list" data-posts-list></div>
+    </section>
+  </div>
+</AdminLayout>
