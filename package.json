@@ -9,6 +9,8 @@
     "build": "astro build",
     "start": "bun run src/server/index.ts",
     "check": "astro check",
+    "test": "bun test",
+    "test:backend": "bun test tests/backend",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun run src/db/migrate.ts",
     "publish": "bun run src/scripts/publish-content.ts"

@@ -6,7 +6,29 @@ import { db } from '../db/index';
 import { contactMessages, posts, projects } from '../db/schema';
 import { publishContent } from '../scripts/publish-content';
 
-const app = new Hono();
+type Publisher = () => Promise<{ posts: number; projects: number }>;
+
+export const slugify = (value: string) => value
+  .normalize('NFKD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+  .trim()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '');
+
+export const getId = (value: string) => {
+  const id = Number(value);
+  return Number.isInteger(id) && id > 0 ? id : null;
+};
+
+export const estimateReadingTime = (body: string) => {
+  const wordCount = body.trim().split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.ceil(wordCount / 200))} menit`;
+};
+
+export const createApp = (database: typeof db = db, publisher?: Publisher) => {
+  const app = new Hono();
+  const runPublish = publisher ?? (() => publishContent(database));
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -35,24 +57,6 @@ const projectSchema = z.object({
 
 const statusSchema = z.object({ status: z.enum(['new', 'read', 'archived']) });
 
-const slugify = (value: string) => value
-  .normalize('NFKD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .toLowerCase()
-  .trim()
-  .replace(/[^a-z0-9]+/g, '-')
-  .replace(/^-+|-+$/g, '');
-
-const getId = (value: string) => {
-  const id = Number(value);
-  return Number.isInteger(id) && id > 0 ? id : null;
-};
-
-const estimateReadingTime = (body: string) => {
-  const wordCount = body.trim().split(/\s+/).filter(Boolean).length;
-  return `${Math.max(1, Math.ceil(wordCount / 200))} menit`;
-};
-
 app.get('/api/health', (c) => c.json({ ok: true }));
 
 app.post('/api/contact', async (c) => {
@@ -63,7 +67,7 @@ app.post('/api/contact', async (c) => {
     return c.json({ error: 'Periksa kembali data yang Anda kirim.' }, 400);
   }
 
-  await db.insert(contactMessages).values({
+  await database.insert(contactMessages).values({
     ...parsed.data,
     status: 'new',
     createdAt: new Date().toISOString()
@@ -82,7 +86,7 @@ app.use('/api/admin/*', async (c, next) => {
 });
 
 app.get('/api/admin/messages', async (c) => {
-  const messages = await db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
+  const messages = await database.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
   return c.json(messages);
 });
 
@@ -92,7 +96,7 @@ app.patch('/api/admin/messages/:id', async (c) => {
   const parsed = statusSchema.safeParse(payload);
   if (!id || !parsed.success) return c.json({ error: 'Data pesan tidak valid.' }, 400);
 
-  const updated = await db.update(contactMessages)
+  const updated = await database.update(contactMessages)
     .set({ status: parsed.data.status })
     .where(eq(contactMessages.id, id))
     .returning();
@@ -101,7 +105,7 @@ app.patch('/api/admin/messages/:id', async (c) => {
 });
 
 app.get('/api/admin/posts', async (c) => {
-  const entries = await db.select().from(posts).orderBy(desc(posts.updatedAt));
+  const entries = await database.select().from(posts).orderBy(desc(posts.updatedAt));
   return c.json(entries);
 });
 
@@ -111,7 +115,7 @@ app.post('/api/admin/posts', async (c) => {
   if (!parsed.success) return c.json({ error: 'Data tulisan tidak valid.' }, 400);
 
   const now = new Date().toISOString();
-  const created = await db.insert(posts).values({
+  const created = await database.insert(posts).values({
     ...parsed.data,
     slug: slugify(parsed.data.title),
     readingTime: estimateReadingTime(parsed.data.body),
@@ -127,14 +131,14 @@ app.put('/api/admin/posts/:id', async (c) => {
   const parsed = postSchema.safeParse(payload);
   if (!id || !parsed.success) return c.json({ error: 'Data tulisan tidak valid.' }, 400);
 
-  const existing = await db.select({ publishedAt: posts.publishedAt }).from(posts).where(eq(posts.id, id));
+  const existing = await database.select({ publishedAt: posts.publishedAt }).from(posts).where(eq(posts.id, id));
   if (!existing[0]) return c.json({ error: 'Tulisan tidak ditemukan.' }, 404);
   const now = new Date().toISOString();
   const publishedAt = parsed.data.status === 'draft'
     ? null
     : existing[0].publishedAt ?? (parsed.data.status === 'published' ? now : null);
 
-  const updated = await db.update(posts).set({
+  const updated = await database.update(posts).set({
     ...parsed.data,
     slug: slugify(parsed.data.title),
     readingTime: estimateReadingTime(parsed.data.body),
@@ -148,18 +152,18 @@ app.put('/api/admin/posts/:id', async (c) => {
 app.delete('/api/admin/posts/:id', async (c) => {
   const id = getId(c.req.param('id'));
   if (!id) return c.json({ error: 'ID tulisan tidak valid.' }, 400);
-  const deleted = await db.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
+  const deleted = await database.delete(posts).where(eq(posts.id, id)).returning({ id: posts.id });
   if (!deleted[0]) return c.json({ error: 'Tulisan tidak ditemukan.' }, 404);
   return c.json({ ok: true });
 });
 
 app.get('/api/admin/projects', async (c) => {
-  const entries = await db.select().from(projects).orderBy(desc(projects.updatedAt));
+  const entries = await database.select().from(projects).orderBy(desc(projects.updatedAt));
   return c.json(entries);
 });
 
 app.post('/api/admin/publish', async (c) => {
-  const result = await publishContent();
+  const result = await runPublish();
   return c.json({ message: `Publish selesai: ${result.posts} tulisan dan ${result.projects} karya. Jalankan build untuk memperbarui website.`, ...result });
 });
 
@@ -168,7 +172,7 @@ app.post('/api/admin/projects', async (c) => {
   const parsed = projectSchema.safeParse(payload);
   if (!parsed.success) return c.json({ error: 'Data karya tidak valid.' }, 400);
 
-  const created = await db.insert(projects).values({
+  const created = await database.insert(projects).values({
     ...parsed.data,
     slug: slugify(parsed.data.title),
     updatedAt: new Date().toISOString()
@@ -182,7 +186,7 @@ app.put('/api/admin/projects/:id', async (c) => {
   const parsed = projectSchema.safeParse(payload);
   if (!id || !parsed.success) return c.json({ error: 'Data karya tidak valid.' }, 400);
 
-  const updated = await db.update(projects).set({
+  const updated = await database.update(projects).set({
     ...parsed.data,
     slug: slugify(parsed.data.title),
     updatedAt: new Date().toISOString()
@@ -194,12 +198,17 @@ app.put('/api/admin/projects/:id', async (c) => {
 app.delete('/api/admin/projects/:id', async (c) => {
   const id = getId(c.req.param('id'));
   if (!id) return c.json({ error: 'ID karya tidak valid.' }, 400);
-  const deleted = await db.delete(projects).where(eq(projects.id, id)).returning({ id: projects.id });
+  const deleted = await database.delete(projects).where(eq(projects.id, id)).returning({ id: projects.id });
   if (!deleted[0]) return c.json({ error: 'Karya tidak ditemukan.' }, 404);
   return c.json({ ok: true });
 });
 
-app.use('/*', serveStatic({ root: './dist' }));
+  app.use('/*', serveStatic({ root: './dist' }));
+
+  return app;
+};
+
+export const app = createApp();
 
 export default {
   port: Number(process.env.PORT ?? 3001),
