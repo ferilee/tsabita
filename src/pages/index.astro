@@ -12,63 +12,45 @@ const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'nume
 ---
 
 <BaseLayout>
-  <section class="hero shell">
-    <div class="hero-kicker"><span class="status-dot"></span> Terbuka untuk kolaborasi</div>
-    <h1>Saya membuat<br /><em>hal-hal yang berarti.</em></h1>
-    <div class="hero-bottom">
-      <p class="hero-intro">Perancang dan pembuat pengalaman digital. Di sini saya menyimpan karya, cerita, opini, dan potongan perjalanan.</p>
-      <a class="arrow-link" href="/tentang">Kenali saya <span>↗</span></a>
+  <section class="home-hero shell">
+    <div class="home-hero-copy">
+      <p class="hero-kicker">Hey, I'm Tsabita <span>♡</span></p>
+      <h1>I design digital <strong>experiences</strong> <em>that inspire.</em></h1>
+      <p class="hero-intro">Seorang perancang dan pembuat pengalaman digital yang percaya bahwa karya yang baik bisa terasa indah, jelas, dan berarti.</p>
+      <div class="hero-actions"><a class="button" href="/karya">Explore My Work <span>→</span></a><a class="outline-button" href="/tentang">Lihat profil <span>↗</span></a></div>
+      <div class="social-row"><span>Find me on</span><a href="https://github.com" aria-label="GitHub">◉</a><a href="https://www.linkedin.com" aria-label="LinkedIn">in</a><a href="https://instagram.com" aria-label="Instagram">◎</a><a href="mailto:halo@example.com" aria-label="Email">@</a></div>
+    </div>
+    <div class="home-hero-art">
+      <img src="/images/hero-designer.png" alt="Ilustrasi desainer digital bekerja di depan laptop" />
+      <div class="hero-sticker">Dream<br />Plan<br />Code<br /><span>Repeat</span> ♡</div>
+      <div class="hero-sparkle">✦</div>
     </div>
   </section>
 
-  <section class="section shell" aria-labelledby="works-heading">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">01 / Pilihan karya</p>
-        <h2 id="works-heading">Yang sedang saya bangun</h2>
-      </div>
-      <a class="text-link" href="/karya">Lihat semua karya <span>↗</span></a>
+  <section class="home-about shell" id="about" aria-labelledby="about-heading">
+    <div class="about-visual"><div class="window-frame"><span></span><span></span><span></span><div class="window-art">✦</div></div><p>turning<br />ideas into<br /><em>impact</em></p></div>
+    <div class="about-copy"><p class="eyebrow">About me <span>✿</span></p><h2 id="about-heading">I turn ideas into <em>beautiful</em> and impactful digital realities.</h2><p>Saya menjembatani strategi, desain, tulisan, dan teknologi untuk membuat pengalaman yang terasa hangat bagi manusia yang menggunakannya.</p><a class="text-link" href="/tentang">More about me <span>→</span></a></div>
+    <div class="skill-grid" id="services">
+      <div class="skill-item"><span class="skill-icon">⌘</span><div><h3>Development</h3><p>Clean, efficient, and scalable code that brings ideas to life.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">✎</span><div><h3>UI/UX Design</h3><p>Designing intuitive interfaces that feel good to use.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">▣</span><div><h3>Responsive Design</h3><p>Seamless experiences across every screen size.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">♡</span><div><h3>User Experience</h3><p>Creating meaningful interactions that solve real problems.</p></div></div>
     </div>
+  </section>
+
+  <section class="featured-section shell" aria-labelledby="works-heading">
+    <div class="section-heading"><div><p class="eyebrow">Featured projects <span>✦</span></p><h2 id="works-heading">A few things I've made</h2></div><a class="text-link" href="/karya">View all projects <span>→</span></a></div>
     <div class="project-grid">
-      {projects.map((project) => (
+      {projects.map((project, index) => (
         <a class="project-card" href={`/karya/${project.id}`}>
-          <div class="project-image" style={`--card-color: ${project.data.cover}`}>
-            <span class="project-number">0{projects.indexOf(project) + 1}</span>
-            <span class="project-mark">✳</span>
-          </div>
-          <div class="project-meta">
-            <div><h3>{project.data.title}</h3><p>{project.data.summary}</p></div>
-            <span class="year">{project.data.year}</span>
-          </div>
+          <div class="project-image" style={`--card-color: ${project.data.cover}`}><span class="project-number">0{index + 1}</span><div class="project-window"><i></i><i></i><i></i><b>{project.data.title}</b><span class="window-line"></span><span class="window-line short"></span></div><span class="project-mark">✦</span></div>
+          <div class="project-meta"><div><h3>{project.data.title}</h3><p>{project.data.category}</p></div><span class="project-arrow">↗</span></div>
         </a>
       ))}
     </div>
   </section>
 
-  <section class="section journal-section" aria-labelledby="journal-heading">
-    <div class="shell">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">02 / Jurnal</p>
-          <h2 id="journal-heading">Catatan dari perjalanan</h2>
-        </div>
-        <a class="text-link" href="/blog">Buka blog <span>↗</span></a>
-      </div>
-      <div class="post-list">
-        {posts.map((post) => (
-          <a class="post-row" href={`/blog/${post.id}`}>
-            <div class="post-date">{formatDate(post.data.publishedAt)}</div>
-            <div class="post-content"><span class="tag">{post.data.category}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div>
-            <span class="row-arrow">↗</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
+  <section class="journal-section" aria-labelledby="journal-heading"><div class="shell"><div class="section-heading"><div><p class="eyebrow">Journal <span>✦</span></p><h2 id="journal-heading">Thoughts, stories & little notes</h2></div><a class="text-link" href="/blog">Read the journal <span>→</span></a></div><div class="post-list">{posts.map((post) => (<a class="post-row" href={`/blog/${post.id}`}><div class="post-date">{formatDate(post.data.publishedAt)}</div><div class="post-content"><span class="tag">{post.data.category}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class="row-arrow">↗</span></a>))}</div></div></section>
 
-  <section class="closing-cta shell">
-    <p class="eyebrow">03 / Kontak</p>
-    <h2>Punya ide yang ingin<br /><em>diwujudkan bersama?</em></h2>
-    <a class="button" href="/kontak">Mari ngobrol <span>↗</span></a>
-  </section>
+  <section class="home-cta shell"><div class="quote-mark">“</div><div><p class="eyebrow">Let's create something</p><h2>Good ideas deserve<br /><em>a beautiful beginning.</em></h2><a class="button" href="/kontak">Let's connect <span>↗</span></a></div><div class="cta-doodle">✧<br /><span>♡</span></div></section>
 </BaseLayout>
