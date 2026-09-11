@@ -2,44 +2,39 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getBlogEntries, getProjectEntries } from '../lib/content';
 
-const projects = (await getProjectEntries())
-  .filter(({ data }) => data.featured)
-  .sort((a, b) => b.data.year - a.data.year);
-const posts = (await getBlogEntries())
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 2);
+const projects = (await getProjectEntries()).filter(({ data }) => data.featured).sort((a, b) => b.data.year - a.data.year);
+const posts = (await getBlogEntries()).sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf()).slice(0, 2);
 const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
 <BaseLayout>
   <section class="home-hero shell">
     <div class="home-hero-copy">
-      <p class="hero-kicker">Hey, I'm Tsabita <span>♡</span></p>
-      <h1>I design digital <strong>experiences</strong> <em>that inspire.</em></h1>
-      <p class="hero-intro">Seorang perancang dan pembuat pengalaman digital yang percaya bahwa karya yang baik bisa terasa indah, jelas, dan berarti.</p>
-      <div class="hero-actions"><a class="button" href="/karya">Explore My Work <span>→</span></a><a class="outline-button" href="/tentang">Lihat profil <span>↗</span></a></div>
-      <div class="social-row"><span>Find me on</span><a href="https://github.com" aria-label="GitHub">◉</a><a href="https://www.linkedin.com" aria-label="LinkedIn">in</a><a href="https://instagram.com" aria-label="Instagram">◎</a><a href="mailto:halo@example.com" aria-label="Email">@</a></div>
+      <p class="hero-kicker">Halo, saya Tsabita <span>♡</span></p>
+      <h1>Saya belajar memahami <strong>kehidupan</strong> <em>melalui bioteknologi.</em></h1>
+      <p class="hero-intro">Mahasiswa Bioteknologi Universitas Negeri Malang yang sedang mencatat proses belajar, cerita kuliah, dan hal-hal kecil yang membuat perjalanan ini berarti.</p>
+      <div class="hero-actions"><a class="button" href="#journey">Lihat perjalanan <span>→</span></a><a class="outline-button" href="/tentang">Tentang Tsabita <span>↗</span></a></div>
+      <div class="social-row"><span>Temukan saya di</span><a href="https://www.linkedin.com" aria-label="LinkedIn">in</a><a href="https://www.instagram.com" aria-label="Instagram">◎</a><a href="mailto:tsabita@example.com" aria-label="Email">@</a></div>
     </div>
-    <div class="home-hero-art">
-      <img src="/images/hero-designer.png" alt="Ilustrasi desainer digital bekerja di depan laptop" />
-      <div class="hero-sticker">Dream<br />Plan<br />Code<br /><span>Repeat</span> ♡</div>
-      <div class="hero-sparkle">✦</div>
+    <div class="home-hero-art bio-hero-art" aria-label="Ilustrasi abstrak bioteknologi">
+      <div class="bio-orbit orbit-one"></div><div class="bio-orbit orbit-two"></div><div class="bio-cell"><span>DNA</span><i></i><b></b></div>
+      <div class="bio-note note-one">observe<br /><em>learn</em><br />grow ♡</div><div class="bio-note note-two">Bioteknologi<br /><span>UM · 2026</span></div><div class="hero-sparkle">✦</div>
     </div>
   </section>
 
   <section class="home-about shell" id="about" aria-labelledby="about-heading">
-    <div class="about-visual"><div class="window-frame"><span></span><span></span><span></span><div class="window-art">✦</div></div><p>turning<br />ideas into<br /><em>impact</em></p></div>
-    <div class="about-copy"><p class="eyebrow">About me <span>✿</span></p><h2 id="about-heading">I turn ideas into <em>beautiful</em> and impactful digital realities.</h2><p>Saya menjembatani strategi, desain, tulisan, dan teknologi untuk membuat pengalaman yang terasa hangat bagi manusia yang menggunakannya.</p><a class="text-link" href="/tentang">More about me <span>→</span></a></div>
+    <div class="about-visual"><div class="window-frame"><span></span><span></span><span></span><div class="window-art">⌬</div></div><p>curious<br />about<br /><em>life</em></p></div>
+    <div class="about-copy"><p class="eyebrow">Tentang saya <span>✿</span></p><h2 id="about-heading">Saya sedang belajar membaca <em>cerita kehidupan</em> dari hal-hal yang paling kecil.</h2><p>Di website ini saya menyimpan catatan kuliah, praktikum, perjalanan di Malang, dan refleksi tentang bertumbuh sebagai mahasiswa sains.</p><a class="text-link" href="/tentang">Kenali Tsabita <span>→</span></a></div>
     <div class="skill-grid" id="services">
-      <div class="skill-item"><span class="skill-icon">⌘</span><div><h3>Development</h3><p>Clean, efficient, and scalable code that brings ideas to life.</p></div></div>
-      <div class="skill-item"><span class="skill-icon">✎</span><div><h3>UI/UX Design</h3><p>Designing intuitive interfaces that feel good to use.</p></div></div>
-      <div class="skill-item"><span class="skill-icon">▣</span><div><h3>Responsive Design</h3><p>Seamless experiences across every screen size.</p></div></div>
-      <div class="skill-item"><span class="skill-icon">♡</span><div><h3>User Experience</h3><p>Creating meaningful interactions that solve real problems.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">⌬</span><div><h3>Biologi molekuler</h3><p>Memahami proses kehidupan dari tingkat molekul dan sel.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">♧</span><div><h3>Mikrobiologi</h3><p>Belajar tentang mikroorganisme dan perannya di sekitar kita.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">⚗</span><div><h3>Praktikum & laboratorium</h3><p>Mencatat metode, hasil, kesalahan, dan pelajaran dari prosesnya.</p></div></div>
+      <div class="skill-item"><span class="skill-icon">✎</span><div><h3>Menulis & dokumentasi</h3><p>Mengubah pengalaman belajar menjadi cerita yang mudah dipahami.</p></div></div>
     </div>
   </section>
 
-  <section class="featured-section shell" aria-labelledby="works-heading">
-    <div class="section-heading"><div><p class="eyebrow">Featured projects <span>✦</span></p><h2 id="works-heading">A few things I've made</h2></div><a class="text-link" href="/karya">View all projects <span>→</span></a></div>
+  <section class="featured-section shell" id="journey" aria-labelledby="works-heading">
+    <div class="section-heading"><div><p class="eyebrow">Catatan & karya <span>✦</span></p><h2 id="works-heading">Beberapa bab perjalanan saya</h2></div><a class="text-link" href="/karya">Lihat semua karya <span>→</span></a></div>
     <div class="project-grid">
       {projects.map((project, index) => (
         <a class="project-card" href={`/karya/${project.id}`}>
@@ -50,7 +45,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'nume
     </div>
   </section>
 
-  <section class="journal-section" aria-labelledby="journal-heading"><div class="shell"><div class="section-heading"><div><p class="eyebrow">Journal <span>✦</span></p><h2 id="journal-heading">Thoughts, stories & little notes</h2></div><a class="text-link" href="/blog">Read the journal <span>→</span></a></div><div class="post-list">{posts.map((post) => (<a class="post-row" href={`/blog/${post.id}`}><div class="post-date">{formatDate(post.data.publishedAt)}</div><div class="post-content"><span class="tag">{post.data.category}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class="row-arrow">↗</span></a>))}</div></div></section>
+  <section class="journal-section" aria-labelledby="journal-heading"><div class="shell"><div class="section-heading"><div><p class="eyebrow">Jurnal pribadi <span>✦</span></p><h2 id="journal-heading">Cerita, opini, dan catatan kecil</h2></div><a class="text-link" href="/blog">Baca jurnal <span>→</span></a></div><div class="post-list">{posts.map((post) => (<a class="post-row" href={`/blog/${post.id}`}><div class="post-date">{formatDate(post.data.publishedAt)}</div><div class="post-content"><span class="tag">{post.data.category}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class="row-arrow">↗</span></a>))}</div></div></section>
 
-  <section class="home-cta shell"><div class="quote-mark">“</div><div><p class="eyebrow">Let's create something</p><h2>Good ideas deserve<br /><em>a beautiful beginning.</em></h2><a class="button" href="/kontak">Let's connect <span>↗</span></a></div><div class="cta-doodle">✧<br /><span>♡</span></div></section>
+  <section class="home-cta shell"><div class="quote-mark">“</div><div><p class="eyebrow">Mari berkenalan</p><h2>Setiap perjalanan<br /><em>punya cerita untuk dibagikan.</em></h2><a class="button" href="/kontak">Hubungi Tsabita <span>↗</span></a></div><div class="cta-doodle">✧<br /><span>♡</span></div></section>
 </BaseLayout>

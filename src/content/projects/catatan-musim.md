@@ -1,11 +1,11 @@
 ---
-title: "Catatan Musim"
-summary: "Kumpulan esai visual tentang perubahan kecil yang terjadi sepanjang tahun."
+title: "Catatan Musim Belajar"
+summary: "Refleksi visual tentang ritme belajar, tugas, praktikum, dan istirahat sepanjang semester."
 year: 2025
-role: "Writing, photography, editorial"
-category: "Editorial"
+role: "Menulis, refleksi, dokumentasi"
+category: "Refleksi"
 featured: false
 cover: "#d8c1c2"
 ---
 
-Sebuah eksperimen editorial yang menggabungkan tulisan pendek, fotografi, dan tata letak yang berubah mengikuti musim.
+Kumpulan catatan pendek tentang semester yang terus berubah: materi baru, laporan yang belum selesai, dan momen-momen kecil yang membantu saya tetap berjalan.

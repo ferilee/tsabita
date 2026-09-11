@@ -1,12 +1,12 @@
 ---
-title: "Mencari ruang untuk berpikir"
-description: "Tentang ritme kerja, jeda, dan kenapa ide sering datang ketika kita berhenti mengejarnya."
+title: "Mencari ruang untuk bertumbuh"
+description: "Tentang jeda, rasa ingin tahu, dan proses menjadi mahasiswa bioteknologi."
 category: "Catatan"
 publishedAt: 2026-09-01
 readingTime: "4 menit"
 featured: true
 ---
 
-Ada hari-hari ketika pekerjaan terasa seperti deretan tab yang tidak pernah selesai ditutup. Saya mulai belajar bahwa jeda bukan lawan dari produktivitas. Jeda memberi jarak agar kita bisa melihat pekerjaan dengan lebih jernih.
+Ada hari-hari ketika tugas, laporan, dan materi kuliah terasa seperti deretan hal yang tidak pernah selesai. Saya mulai belajar bahwa jeda bukan tanda tertinggal. Jeda memberi ruang untuk memahami apa yang sedang saya jalani.
 
-Website ini menjadi ruang kecil untuk menyimpan proses, pertanyaan, dan hal-hal yang belum selesai saya pahami.
+Website ini menjadi ruang kecil untuk menyimpan proses, pertanyaan, dan hal-hal yang belum selesai saya pahami sebagai mahasiswa bioteknologi.

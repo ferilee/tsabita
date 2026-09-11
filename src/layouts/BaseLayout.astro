@@ -9,8 +9,8 @@ interface Props {
 }
 
 const {
-  title = 'Nama Anda — karya, cerita, dan catatan',
-  description = 'Portofolio pribadi dan jurnal digital tentang karya, cerita, opini, dan perjalanan.',
+  title = 'Tsabita Dianyssa Estasaadya — perjalanan bioteknologi',
+  description = 'Catatan perjalanan hidup dan kuliah Tsabita Dianyssa Estasaadya, mahasiswa Bioteknologi Universitas Negeri Malang.',
   noindex = false,
   showMobileNav = true
 } = Astro.props;
@@ -35,12 +35,12 @@ const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.s
         <a class="brand" href="/" aria-label="Kembali ke beranda">tsabita<span>.</span><b>♡</b></a>
         <nav aria-label="Navigasi utama">
           <a href="/">Home</a>
-          <a href="/tentang">About</a>
-          <a href="/karya">Work</a>
-          <a href="/#services">Services</a>
-          <a href="/blog">Journal</a>
-          <a href="/kontak">Contact</a>
-          <a class="nav-contact" href="/kontak">Let's Connect <span>↗</span></a>
+          <a href="/tentang">Tentang</a>
+          <a href="/karya">Karya</a>
+          <a href="/#journey">Perjalanan</a>
+          <a href="/blog">Jurnal</a>
+          <a href="/kontak">Kontak</a>
+          <a class="nav-contact" href="/kontak">Mari terhubung <span>↗</span></a>
         </nav>
       </div>
     </header>
@@ -49,19 +49,19 @@ const isCurrent = (path: string) => path === '/' ? pathname === '/' : pathname.s
     </main>
     {showMobileNav && <nav class="mobile-bottom-nav" aria-label="Navigasi mobile">
       <a href="/" aria-current={isCurrent('/') ? 'page' : undefined}><span class="mobile-nav-icon">⌂</span><span>Home</span></a>
-      <a href="/tentang" aria-current={isCurrent('/tentang') ? 'page' : undefined}><span class="mobile-nav-icon">✿</span><span>About</span></a>
-      <a href="/karya" aria-current={isCurrent('/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Work</span></a>
-      <a href="/blog" aria-current={isCurrent('/blog') ? 'page' : undefined}><span class="mobile-nav-icon">☷</span><span>Journal</span></a>
-      <a href="/kontak" aria-current={isCurrent('/kontak') ? 'page' : undefined}><span class="mobile-nav-icon">♡</span><span>Contact</span></a>
+      <a href="/tentang" aria-current={isCurrent('/tentang') ? 'page' : undefined}><span class="mobile-nav-icon">✿</span><span>Tentang</span></a>
+      <a href="/karya" aria-current={isCurrent('/karya') ? 'page' : undefined}><span class="mobile-nav-icon">✦</span><span>Karya</span></a>
+      <a href="/blog" aria-current={isCurrent('/blog') ? 'page' : undefined}><span class="mobile-nav-icon">☷</span><span>Jurnal</span></a>
+      <a href="/kontak" aria-current={isCurrent('/kontak') ? 'page' : undefined}><span class="mobile-nav-icon">♡</span><span>Kontak</span></a>
     </nav>}
     <footer class="site-footer">
       <div class="shell footer-inner">
-        <p>© {new Date().getFullYear()} Nama Anda</p>
-        <p>Dibuat dengan rasa ingin tahu <span class="footer-heart">♡</span></p>
+        <p>© {new Date().getFullYear()} Tsabita Dianyssa Estasaadya</p>
+        <p>Belajar, bertumbuh, dan mencatat <span class="footer-heart">♡</span></p>
         <div class="footer-links">
           <a href="https://www.linkedin.com" rel="noreferrer">LinkedIn</a>
-          <a href="https://github.com" rel="noreferrer">GitHub</a>
-          <a href="mailto:halo@example.com">Email</a>
+          <a href="https://www.instagram.com" rel="noreferrer">Instagram</a>
+          <a href="mailto:tsabita@example.com">Email</a>
         </div>
       </div>
     </footer>

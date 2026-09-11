@@ -6,11 +6,11 @@ const posts = (await getBlogEntries()).sort((a, b) => b.data.publishedAt.valueOf
 const formatDate = (date: Date) => date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 
-<BaseLayout title="Blog — Nama Anda">
+<BaseLayout title="Jurnal Tsabita — cerita dan catatan">
   <section class="page-intro shell">
-    <p class="eyebrow">02 / Jurnal pribadi</p>
-    <h1>Tempat menyimpan<br /><em>yang belum selesai.</em></h1>
-    <p class="page-lede">Cerita, opini, catatan perjalanan, dan pertanyaan yang masih saya bawa pulang.</p>
+    <p class="eyebrow">03 / Jurnal pribadi</p>
+    <h1>Tempat menyimpan<br /><em>cerita perjalanan.</em></h1>
+    <p class="page-lede">Cerita kuliah, opini, catatan perjalanan, dan pertanyaan yang masih saya bawa pulang.</p>
   </section>
   <section class="section shell compact-top">
     <div class="post-list full-list">

@@ -26,7 +26,7 @@ Buka `http://localhost:4321` untuk melihat website. API berjalan di `http://loca
 - `bun run db:generate` — membuat migration dari schema Drizzle.
 - `bun run db:migrate` — menjalankan migration database.
 
-Tulisan blog ada di `src/content/blog/`, sedangkan karya ada di `src/content/projects/`. Ganti nama, email, tautan sosial, dan konten contoh sebelum dipublikasikan.
+Tulisan blog ada di `src/content/blog/`, sedangkan karya ada di `src/content/projects/`. Ganti alamat email, tautan sosial, dan konten contoh dengan informasi Tsabita sebelum dipublikasikan.
 
 ## Dashboard admin
 

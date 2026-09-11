@@ -5,11 +5,11 @@ import { getProjectEntries } from '../../lib/content';
 const projects = (await getProjectEntries()).sort((a, b) => b.data.year - a.data.year);
 ---
 
-<BaseLayout title="Karya — Nama Anda">
+<BaseLayout title="Karya dan catatan — Tsabita">
   <section class="page-intro shell">
-    <p class="eyebrow">01 / Portofolio</p>
-    <h1>Beberapa hal<br /><em>yang pernah dibuat.</em></h1>
-    <p class="page-lede">Kumpulan proyek, eksperimen, dan kolaborasi yang membentuk cara saya bekerja.</p>
+    <p class="eyebrow">02 / Karya dan catatan</p>
+    <h1>Hal-hal yang<br /><em>sedang saya pelajari.</em></h1>
+    <p class="page-lede">Dokumentasi praktikum, proyek kuliah, eksperimen kecil, dan cerita visual dari perjalanan saya sebagai mahasiswa bioteknologi.</p>
   </section>
   <section class="section shell compact-top">
     <div class="project-grid project-grid-all">
