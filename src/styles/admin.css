@@ -23,6 +23,12 @@
 .admin-quick-actions .eyebrow { margin: 0; }
 .admin-quick-actions > div { display: flex; gap: 10px; }
 .admin-quick-actions .button, .admin-quick-actions .outline-button { padding: 10px 15px; font-size: .7rem; }
+.admin-profile-card { margin-top: 0; }
+.about-image-editor { display: grid; grid-template-columns: minmax(180px, 260px) 1fr; gap: 28px; align-items: start; }
+.about-image-preview { display: grid; aspect-ratio: 1; min-height: 180px; place-items: center; overflow: hidden; border-radius: 22px; background: var(--pink-deep); }
+.about-image-preview img { width: 100%; height: 100%; object-fit: cover; }
+.about-image-preview span { color: var(--coral); font: 5rem var(--serif); }
+.upload-help { color: var(--muted); font-size: .7rem; }
 .admin-content-status { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 4px 0 18px; border-bottom: 1px solid var(--line); }
 .admin-content-status .eyebrow { margin: 0; }
 .admin-content-status > div { display: flex; gap: 20px; color: var(--muted); font-size: .72rem; }
@@ -84,4 +90,6 @@
   .admin-quick-actions, .admin-content-status { align-items: start; flex-direction: column; }
   .admin-quick-actions > div, .admin-content-status > div { width: 100%; }
   .admin-quick-actions .button, .admin-quick-actions .outline-button { flex: 1; justify-content: center; }
+  .about-image-editor { grid-template-columns: 1fr; }
+  .about-image-preview { width: min(100%, 240px); }
 }

@@ -35,3 +35,9 @@ export const projects = sqliteTable('projects', {
   coverImage: text('cover_image'),
   updatedAt: text('updated_at').notNull()
 });
+
+export const siteSettings = sqliteTable('site_settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: text('updated_at').notNull()
+});

@@ -21,6 +21,19 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       <div><a class="button" href="/admin/tulisan">Tulis artikel <span>↗</span></a><a class="outline-button" href="/admin/karya">Tambah karya <span>↗</span></a></div>
     </div>
 
+    <section class="admin-card admin-profile-card">
+      <div class="card-heading"><div><p class="eyebrow">Profil</p><h2>Foto di halaman tentang</h2></div></div>
+      <div class="about-image-editor">
+        <div class="about-image-preview" data-about-preview><span data-about-placeholder aria-hidden="true">✳</span><img data-about-image alt="Preview foto Tsabita" hidden /></div>
+        <form class="admin-form" data-about-form>
+          <label>Ganti gambar<input name="image" type="file" accept="image/jpeg,image/png,image/webp" required /></label>
+          <small class="upload-help">JPG, PNG, atau WebP. Ukuran maksimal 5 MB.</small>
+          <button class="button" type="submit">Simpan gambar <span>↗</span></button>
+          <p class="form-status" data-about-status role="status"></p>
+        </form>
+      </div>
+    </section>
+
     <div class="admin-content-status">
       <p class="eyebrow">Status konten</p>
       <div><span><strong data-published-count>0</strong> tulisan terbit</span><span><strong data-draft-count>0</strong> tulisan draft</span></div>

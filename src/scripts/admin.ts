@@ -7,6 +7,7 @@ interface ApiOptions extends RequestInit {
 interface AdminMessage { id: number; name: string; email: string; message: string; status: string; }
 interface AdminPost { id: number; title: string; category: string; status: string; featured: boolean; [key: string]: unknown; }
 interface AdminProject { id: number; title: string; category: string; year: number; [key: string]: unknown; }
+interface AboutImage { imageUrl: string | null; mimeType: string | null; updatedAt: string | null; }
 
 const loginPanel = document.querySelector<HTMLElement>('[data-login-panel]');
 const dashboard = document.querySelector<HTMLElement>('[data-dashboard]');
@@ -14,13 +15,19 @@ const loginForm = document.querySelector<HTMLFormElement>('[data-login-form]');
 const loginStatus = document.querySelector<HTMLElement>('[data-login-status]');
 const postForm = document.querySelector<HTMLFormElement>('[data-post-form]');
 const projectForm = document.querySelector<HTMLFormElement>('[data-project-form]');
+const aboutForm = document.querySelector<HTMLFormElement>('[data-about-form]');
+const aboutImage = document.querySelector<HTMLImageElement>('[data-about-image]');
+const aboutPlaceholder = document.querySelector<HTMLElement>('[data-about-placeholder]');
 const postBody = postForm?.elements.namedItem('body');
 const postStatusField = postForm?.elements.namedItem('status');
 let token = localStorage.getItem('admin-token') ?? '';
 let editingPublishedAt: string | null = null;
 
 const api = async <T>(path: string, options: ApiOptions = {}): Promise<T> => {
-  const response = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers ?? {}) } });
+  const headers = new Headers(options.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+  if (!(options.body instanceof FormData) && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  const response = await fetch(path, { ...options, headers });
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(result.error ?? 'Permintaan gagal.');
   return result as T;
@@ -37,6 +44,17 @@ const estimateReadingTime = (body: string) => `${Math.max(1, Math.ceil(body.trim
 const formatPublishedAt = (value: string) => {
   const date = new Date(value);
   return Number.isNaN(date.valueOf()) ? null : new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(date);
+};
+const updateAboutPreview = (info: AboutImage) => {
+  if (!aboutImage || !aboutPlaceholder) return;
+  if (info.imageUrl) {
+    aboutImage.src = info.imageUrl;
+    aboutImage.hidden = false;
+    aboutPlaceholder.hidden = true;
+  } else {
+    aboutImage.hidden = true;
+    aboutPlaceholder.hidden = false;
+  }
 };
 const updatePostMeta = () => {
   const body = postBody instanceof HTMLTextAreaElement ? postBody.value : '';
@@ -57,9 +75,10 @@ const renderPost = (item: AdminPost, withActions = true) => `<div class="list-it
 const renderProject = (item: AdminProject, withActions = true) => `<div class="list-item"><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.category)} · ${item.year}</small></div>${withActions ? `<div class="list-actions"><button class="icon-button" data-edit-project="${item.id}">Edit</button><button class="icon-button danger" data-delete-project="${item.id}">Hapus</button></div>` : ''}</div>`;
 
 const loadDashboard = async () => {
-  const [messages, posts, projects] = await Promise.all([
-    api<AdminMessage[]>('/api/admin/messages'), api<AdminPost[]>('/api/admin/posts'), api<AdminProject[]>('/api/admin/projects')
+  const [messages, posts, projects, about] = await Promise.all([
+    api<AdminMessage[]>('/api/admin/messages'), api<AdminPost[]>('/api/admin/posts'), api<AdminProject[]>('/api/admin/projects'), api<AboutImage>('/api/admin/about')
   ]);
+  updateAboutPreview(about);
   const setText = (selector: string, value: string | number) => { const element = document.querySelector<HTMLElement>(selector); if (element) element.textContent = String(value); };
   const setHtml = (selector: string, value: string) => { const element = document.querySelector<HTMLElement>(selector); if (element) element.innerHTML = value; };
   setText('[data-message-count]', messages.length); setText('[data-post-count]', posts.length); setText('[data-project-count]', projects.length);
@@ -122,6 +141,24 @@ projectForm?.addEventListener('submit', async (event) => {
   const id = data.id?.toString(); delete data.id; const status = document.querySelector<HTMLElement>('[data-project-status]');
   try { await api<AdminProject>(id ? `/api/admin/projects/${id}` : '/api/admin/projects', { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) }); if (status) status.textContent = 'Karya tersimpan.'; resetForm(projectForm, '[data-project-form-title]', 'Karya baru'); await loadDashboard(); }
   catch (error) { if (status) status.textContent = errorMessage(error); }
+});
+
+aboutForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const status = document.querySelector<HTMLElement>('[data-about-status]');
+  const file = aboutForm.elements.namedItem('image');
+  if (!(file instanceof HTMLInputElement) || !file.files?.[0]) {
+    if (status) status.textContent = 'Pilih gambar terlebih dahulu.';
+    return;
+  }
+  try {
+    const result = await api<AboutImage>('/api/admin/about/image', { method: 'POST', body: new FormData(aboutForm) });
+    updateAboutPreview(result);
+    aboutForm.reset();
+    if (status) status.textContent = 'Foto profil berhasil diperbarui.';
+  } catch (error) {
+    if (status) status.textContent = errorMessage(error);
+  }
 });
 
 document.addEventListener('click', async (event) => {

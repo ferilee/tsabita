@@ -9,7 +9,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p class="page-lede">Mahasiswa Bioteknologi Universitas Negeri Malang yang sedang belajar, bertumbuh, dan mendokumentasikan perjalanannya.</p>
   </section>
   <section class="section shell about-grid">
-    <div class="about-portrait"><span>✳</span></div>
+    <div class="about-portrait" data-about-portrait><span aria-hidden="true">✳</span></div>
     <div class="prose">
       <p>Nama lengkap saya Tsabita Dianyssa Estasaadya. Saat ini saya menempuh kuliah di Program Studi Bioteknologi, Universitas Negeri Malang.</p>
       <p>Website ini adalah ruang pribadi untuk menyimpan cerita kehidupan kampus, catatan praktikum, hal-hal yang sedang saya pelajari, dan perubahan kecil yang saya temui sepanjang perjalanan.</p>
@@ -18,3 +18,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const portrait = document.querySelector<HTMLElement>('[data-about-portrait]');
+  if (portrait) {
+    fetch('/api/public/about')
+      .then((response) => response.ok ? response.json() : null)
+      .then((about) => {
+        if (!about?.imageUrl) return;
+        const image = document.createElement('img');
+        image.src = about.imageUrl;
+        image.alt = 'Foto Tsabita Dianyssa Estasaadya';
+        image.loading = 'lazy';
+        image.addEventListener('error', () => image.remove());
+        portrait.replaceChildren(image);
+      })
+      .catch(() => {});
+  }
+</script>

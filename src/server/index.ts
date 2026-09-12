@@ -1,12 +1,29 @@
+import { randomUUID } from 'node:crypto';
+import { mkdir, rm } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { serveStatic } from 'hono/bun';
 import { Hono } from 'hono';
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../db/index';
-import { contactMessages, posts, projects } from '../db/schema';
+import { contactMessages, posts, projects, siteSettings } from '../db/schema';
 import { publishContent } from '../scripts/publish-content';
 
 type Publisher = () => Promise<{ posts: number; projects: number }>;
+type AppOptions = { aboutImageDirectory?: string };
+
+const aboutImageKey = 'about_image';
+const maxAboutImageSize = 5 * 1024 * 1024;
+const aboutImageTypes = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp'
+} as const;
+const aboutImageMetadataSchema = z.object({
+  filename: z.string().regex(/^about-[a-f0-9-]+\.(jpg|png|webp)$/),
+  mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  updatedAt: z.string()
+});
 
 export const slugify = (value: string) => value
   .normalize('NFKD')
@@ -26,9 +43,29 @@ export const estimateReadingTime = (body: string) => {
   return `${Math.max(1, Math.ceil(wordCount / 200))} menit`;
 };
 
-export const createApp = (database: typeof db = db, publisher?: Publisher) => {
+export const createApp = (database: typeof db = db, publisher?: Publisher, options: AppOptions = {}) => {
   const app = new Hono();
   const runPublish = publisher ?? (() => publishContent(database));
+  const aboutImageDirectory = options.aboutImageDirectory
+    ?? process.env.ABOUT_IMAGE_DIR
+    ?? join(dirname(process.env.DB_FILE_NAME ?? './data/tsabita.sqlite'), 'uploads/about');
+
+  const readAboutImage = async () => {
+    const setting = await database.select().from(siteSettings).where(eq(siteSettings.key, aboutImageKey));
+    if (!setting[0]) return null;
+    try {
+      const metadata = aboutImageMetadataSchema.safeParse(JSON.parse(setting[0].value));
+      return metadata.success ? metadata.data : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const aboutImageInfo = (metadata: z.infer<typeof aboutImageMetadataSchema> | null) => ({
+    imageUrl: metadata ? `/api/public/about-image?v=${encodeURIComponent(metadata.updatedAt)}` : null,
+    mimeType: metadata?.mimeType ?? null,
+    updatedAt: metadata?.updatedAt ?? null
+  });
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -59,6 +96,24 @@ const statusSchema = z.object({ status: z.enum(['new', 'read', 'archived']) });
 
 app.get('/api/health', (c) => c.json({ ok: true }));
 
+app.get('/api/public/about', async (c) => {
+  return c.json(aboutImageInfo(await readAboutImage()));
+});
+
+app.get('/api/public/about-image', async (c) => {
+  const metadata = await readAboutImage();
+  if (!metadata) return c.json({ error: 'Gambar profil belum tersedia.' }, 404);
+
+  const image = Bun.file(join(aboutImageDirectory, metadata.filename));
+  if (!await image.exists()) return c.json({ error: 'File gambar profil tidak ditemukan.' }, 404);
+  return new Response(image, {
+    headers: {
+      'Cache-Control': 'public, max-age=300',
+      'Content-Type': metadata.mimeType
+    }
+  });
+});
+
 app.post('/api/contact', async (c) => {
   const payload = await c.req.json().catch(() => null);
   const parsed = contactSchema.safeParse(payload);
@@ -83,6 +138,36 @@ app.use('/api/admin/*', async (c, next) => {
     return c.json({ error: 'Token admin tidak valid.' }, 401);
   }
   await next();
+});
+
+app.get('/api/admin/about', async (c) => {
+  return c.json(aboutImageInfo(await readAboutImage()));
+});
+
+app.post('/api/admin/about/image', async (c) => {
+  const payload = await c.req.parseBody();
+  const image = payload.image;
+  if (!(image instanceof File)) return c.json({ error: 'File gambar wajib diunggah.' }, 400);
+  if (!(image.type in aboutImageTypes)) return c.json({ error: 'Format gambar harus JPG, PNG, atau WebP.' }, 400);
+  if (image.size > maxAboutImageSize) return c.json({ error: 'Ukuran gambar maksimal 5 MB.' }, 400);
+
+  const previous = await readAboutImage();
+  const now = new Date().toISOString();
+  const filename = `about-${randomUUID()}${aboutImageTypes[image.type as keyof typeof aboutImageTypes]}`;
+  await mkdir(aboutImageDirectory, { recursive: true });
+  await Bun.write(join(aboutImageDirectory, filename), image);
+
+  const metadata = { filename, mimeType: image.type as keyof typeof aboutImageTypes, updatedAt: now };
+  const value = JSON.stringify(metadata);
+  const existingSetting = await database.select({ key: siteSettings.key }).from(siteSettings).where(eq(siteSettings.key, aboutImageKey));
+  if (existingSetting[0]) {
+    await database.update(siteSettings).set({ value, updatedAt: now }).where(eq(siteSettings.key, aboutImageKey));
+  } else {
+    await database.insert(siteSettings).values({ key: aboutImageKey, value, updatedAt: now });
+  }
+
+  if (previous) await rm(join(aboutImageDirectory, previous.filename), { force: true });
+  return c.json(aboutImageInfo(metadata), 201);
 });
 
 app.get('/api/admin/messages', async (c) => {

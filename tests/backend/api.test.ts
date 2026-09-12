@@ -5,6 +5,7 @@ import { join } from 'node:path';
 const databasePath = '/tmp/tsabita-api-test-' + process.pid + '.sqlite';
 const blogOutputPath = '/tmp/tsabita-api-test-' + process.pid + '-blog';
 const projectOutputPath = '/tmp/tsabita-api-test-' + process.pid + '-projects';
+const aboutImageOutputPath = '/tmp/tsabita-api-test-' + process.pid + '-about';
 process.env.DB_FILE_NAME = databasePath;
 process.env.ADMIN_TOKEN = 'test-admin-token';
 
@@ -255,6 +256,46 @@ describe('project endpoints', () => {
   });
 });
 
+describe('about image endpoints', () => {
+  test('admin dapat mengunggah gambar dan website publik dapat menampilkannya', async () => {
+    const aboutApp = createApp(db, undefined, { aboutImageDirectory: aboutImageOutputPath });
+    const form = new FormData();
+    form.append('image', new File([new Uint8Array([137, 80, 78, 71])], 'tsabita.png', { type: 'image/png' }));
+
+    const uploadResponse = await aboutApp.request('/api/admin/about/image', { method: 'POST', headers: authHeaders, body: form });
+    const uploaded = await readJson<{ imageUrl: string; mimeType: string }>(uploadResponse);
+    expect(uploadResponse.status).toBe(201);
+    expect(uploaded.imageUrl).toContain('/api/public/about-image?v=');
+    expect(uploaded.mimeType).toBe('image/png');
+
+    const publicInfoResponse = await aboutApp.request('/api/public/about');
+    const publicInfo = await readJson<{ imageUrl: string | null }>(publicInfoResponse);
+    expect(publicInfoResponse.status).toBe(200);
+    expect(publicInfo.imageUrl).toContain('/api/public/about-image?v=');
+
+    const imageResponse = await aboutApp.request('/api/public/about-image');
+    expect(imageResponse.status).toBe(200);
+    expect(imageResponse.headers.get('Content-Type')).toBe('image/png');
+    expect(new Uint8Array(await imageResponse.arrayBuffer())).toEqual(new Uint8Array([137, 80, 78, 71]));
+
+    const replacementForm = new FormData();
+    replacementForm.append('image', new File([new Uint8Array([255, 216, 255, 224])], 'tsabita.jpg', { type: 'image/jpeg' }));
+    const replacementResponse = await aboutApp.request('/api/admin/about/image', { method: 'POST', headers: authHeaders, body: replacementForm });
+    expect(replacementResponse.status).toBe(201);
+    expect(readdirSync(aboutImageOutputPath)).toHaveLength(1);
+    expect((await aboutApp.request('/api/public/about-image')).headers.get('Content-Type')).toBe('image/jpeg');
+  });
+
+  test('menolak file yang bukan gambar', async () => {
+    const aboutApp = createApp(db, undefined, { aboutImageDirectory: aboutImageOutputPath });
+    const form = new FormData();
+    form.append('image', new File(['teks'], 'catatan.txt', { type: 'text/plain' }));
+
+    const response = await aboutApp.request('/api/admin/about/image', { method: 'POST', headers: authHeaders, body: form });
+    expect(response.status).toBe(400);
+  });
+});
+
 describe('publish endpoint', () => {
   test('menjalankan publisher dan mengembalikan ringkasan publish', async () => {
     let called = false;
@@ -297,4 +338,5 @@ afterAll(() => {
   }
   rmSync(blogOutputPath, { recursive: true, force: true });
   rmSync(projectOutputPath, { recursive: true, force: true });
+  rmSync(aboutImageOutputPath, { recursive: true, force: true });
 });
