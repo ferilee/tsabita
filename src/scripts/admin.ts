@@ -20,6 +20,9 @@ const aboutImage = document.querySelector<HTMLImageElement>('[data-about-image]'
 const aboutPlaceholder = document.querySelector<HTMLElement>('[data-about-placeholder]');
 const postBody = postForm?.elements.namedItem('body');
 const postStatusField = postForm?.elements.namedItem('status');
+const postCategoryField = postForm?.elements.namedItem('category');
+const customCategoryField = postForm?.querySelector<HTMLElement>('[data-custom-category-field]');
+const customCategoryInput = postForm?.elements.namedItem('customCategory');
 let token = localStorage.getItem('admin-token') ?? '';
 let editingPublishedAt: string | null = null;
 
@@ -44,6 +47,13 @@ const estimateReadingTime = (body: string) => `${Math.max(1, Math.ceil(body.trim
 const formatPublishedAt = (value: string) => {
   const date = new Date(value);
   return Number.isNaN(date.valueOf()) ? null : new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(date);
+};
+const syncPostCategory = () => {
+  if (!(postCategoryField instanceof HTMLSelectElement) || !(customCategoryInput instanceof HTMLInputElement)) return;
+  const custom = postCategoryField.value === '__custom__';
+  if (customCategoryField) customCategoryField.hidden = !custom;
+  customCategoryInput.required = custom;
+  if (!custom) customCategoryInput.value = '';
 };
 const updateAboutPreview = (info: AboutImage) => {
   if (!aboutImage || !aboutPlaceholder) return;
@@ -94,10 +104,19 @@ const loadDashboard = async () => {
   return { messages, posts, projects };
 };
 
-const resetForm = (form: HTMLFormElement | null, titleSelector: string, title: string) => { if (!form) return; form.reset(); setFormValue(form, 'id', ''); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = title; if (form === postForm) { editingPublishedAt = null; updatePostMeta(); } };
+const resetForm = (form: HTMLFormElement | null, titleSelector: string, title: string) => { if (!form) return; form.reset(); setFormValue(form, 'id', ''); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = title; if (form === postForm) { editingPublishedAt = null; syncPostCategory(); updatePostMeta(); } };
 const fillForm = (form: HTMLFormElement | null, titleSelector: string, item: Record<string, unknown>) => {
   if (!form) return;
   Object.keys(item).forEach((key) => setFormValue(form, key, item[key]));
+  if (form === postForm && postCategoryField instanceof HTMLSelectElement && customCategoryInput instanceof HTMLInputElement) {
+    const category = String(item.category ?? '');
+    const knownCategory = Array.from(postCategoryField.options).some((option) => option.value === category);
+    if (!knownCategory) {
+      postCategoryField.value = '__custom__';
+      customCategoryInput.value = category;
+    }
+    syncPostCategory();
+  }
   const featured = form.elements.namedItem('featured'); if (featured instanceof HTMLInputElement) featured.checked = Boolean(item.featured);
   setFormValue(form, 'id', item.id); const heading = document.querySelector<HTMLElement>(titleSelector); if (heading) heading.textContent = `Edit: ${item.title}`;
   if (form === postForm) { editingPublishedAt = item.publishedAt?.toString() || null; updatePostMeta(); }
@@ -106,6 +125,8 @@ const fillForm = (form: HTMLFormElement | null, titleSelector: string, item: Rec
 
 if (postBody instanceof HTMLTextAreaElement) postBody.addEventListener('input', updatePostMeta);
 if (postStatusField instanceof HTMLSelectElement) postStatusField.addEventListener('change', updatePostMeta);
+if (postCategoryField instanceof HTMLSelectElement) postCategoryField.addEventListener('change', syncPostCategory);
+syncPostCategory();
 updatePostMeta();
 
 loginForm?.addEventListener('submit', async (event) => {
@@ -130,6 +151,8 @@ postForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data: Record<string, FormDataEntryValue | boolean> = Object.fromEntries(new FormData(postForm));
   const featured = postForm.elements.namedItem('featured'); data.featured = featured instanceof HTMLInputElement && featured.checked;
+  if (data.category === '__custom__') data.category = data.customCategory?.toString().trim() ?? '';
+  delete data.customCategory;
   const id = data.id?.toString(); delete data.id; const status = document.querySelector<HTMLElement>('[data-post-status]');
   try { await api<AdminPost>(id ? `/api/admin/posts/${id}` : '/api/admin/posts', { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) }); if (status) status.textContent = 'Tulisan tersimpan.'; resetForm(postForm, '[data-post-form-title]', 'Tulisan baru'); await loadDashboard(); }
   catch (error) { if (status) status.textContent = errorMessage(error); }
